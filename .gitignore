@@ -1,0 +1,7 @@
+
+*.bak
+*.o
+*.ppu
+0.0.1/lib
+0.0.1/backup
+0.0.1/lib
