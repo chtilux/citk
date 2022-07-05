@@ -6,15 +6,33 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
-  citk.global;
+  StdCtrls, Buttons, Menus, ActnList, RTTICtrls, citk.global, citk.DataModule;
 
 type
-
   { TMainW }
 
   TMainW = class(TForm)
+    UsersAction: TAction;
+    Separator2: TMenuItem;
+    UsersMenuItem: TMenuItem;
+    QuitApplicationAction: TAction;
+    ProductsAction: TAction;
+    CustomersAction: TAction;
+    ApplicationDictionaryAction: TAction;
+    citkActionList: TActionList;
     Logo: TImage;
+    citkMainMenu: TMainMenu;
+    FileMenuItem: TMenuItem;
+    DictionaryMenuItem: TMenuItem;
+    CustomersMenuItem: TMenuItem;
+    Separator1: TMenuItem;
+    ProductsMenuItem: TMenuItem;
+    QuitMenuItem: TMenuItem;
     SB: TStatusBar;
+    procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure QuitApplicationActionExecute(Sender: TObject);
   private
     FInfo: TInfo;
     procedure SetInfo(AValue: TInfo);
@@ -30,9 +48,28 @@ implementation
 {$R *.lfm}
 
 uses
-  Chtilux.Utils;
+  citk.utils;
 
 { TMainW }
+
+procedure TMainW.FormShow(Sender: TObject);
+begin
+  ReadLastSizeAndPosition(Sender as TForm);
+end;
+
+procedure TMainW.QuitApplicationActionExecute(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TMainW.FormDestroy(Sender: TObject);
+begin
+  WriteCurrentSizeAndPosition(Sender as TForm);
+end;
+
+procedure TMainW.FormResize(Sender: TObject);
+begin
+end;
 
 procedure TMainW.SetInfo(AValue: TInfo);
 begin

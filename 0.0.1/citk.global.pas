@@ -5,55 +5,50 @@ unit citk.global;
 interface
 
 uses
-  Classes, SysUtils, Chtilux.Logger, ZConnection;
+  citk.user, Classes, SysUtils, Chtilux.Logger, ZConnection, citk.encrypt;
 
 type
-  { TInfo }
-
-  EUserInfo = class(Exception);
-
-  { TUserInfo }
-
-  TUserInfo = class(TObject)
-  private
-    FLogin: string;
-    FPassword: string;
-    procedure SetLogin(AValue: string);
-    procedure SetPassword(AValue: string);
-  public
-    property Login: string read FLogin write SetLogin;
-    property Password: string read FPassword write SetPassword;
-  end;
 
   EInfo = class(Exception);
+
+  { TInfo }
+
   TInfo = class(TObject)
   private
     FAlias: string;
     FApplicationDescription: string;
     FCnx: TZConnection;
+    FCrypter: IEncrypter;
     FDatabaseRelease: string;
     FDBA: string;
     FDBAPwd: string;
+    FDefaultUserPassword: string;
     FDomain: string;
     FGlobalPath: TFilename;
     FKey: string;
     FLocalPath: TFilename;
+    FLoggedIn: boolean;
     FLogger: ILogger;
+    FPasswordChar: Char;
     FProtocol: string;
     FServer: string;
-    FUser: TUserInfo;
+    FUser: IUserInfo;
     FValues: TStrings;
     procedure SetAlias(AValue: string);
     procedure SetApplicationDescription(AValue: string);
     procedure SetCnx(AValue: TZConnection);
+    procedure SetCrypter(AValue: IEncrypter);
     procedure SetDatabaseRelease(AValue: string);
     procedure SetDBA(AValue: string);
     procedure SetDBAPwd(AValue: string);
+    procedure SetDefaultUserPassword(AValue: string);
     procedure SetDomain(AValue: string);
     procedure SetGlobalPath(AValue: TFilename);
     procedure SetKey(AValue: string);
     procedure SetLocalPath(AValue: TFilename);
+    procedure SetLoggedIn(AValue: boolean);
     procedure SetLogger(AValue: ILogger);
+    procedure SetPasswordChar(AValue: Char);
     procedure SetProtocol(AValue: string);
     procedure SetServer(AValue: string);
     procedure SetValue(const Name, Value: string);
@@ -65,7 +60,7 @@ type
     property LocalPath: TFilename read FLocalPath write SetLocalPath;
     property GlobalPath: TFilename read FGlobalPath write SetGlobalPath;
     property Logger: ILogger read FLogger write SetLogger;
-    property User: TUserInfo read FUser;
+    property User: IUserInfo read FUser;
     property Key: string read FKey write SetKey;
     property Server: string read FServer write SetServer;
     property Alias: string read FAlias write SetAlias;
@@ -78,6 +73,10 @@ type
     procedure LogGlobalInfos;
     function Database: string;
     property ApplicationDescription: string read FApplicationDescription write SetApplicationDescription;
+    property DefaultUserPassword: string read FDefaultUserPassword write SetDefaultUserPassword;
+    property LoggedIn: boolean read FLoggedIn write SetLoggedIn;
+    property Crypter: IEncrypter read FCrypter write SetCrypter;
+    property PasswordChar: Char read FPasswordChar write SetPasswordChar;
   end;
 
 procedure InitGlobalInfo(var Info: TInfo);
@@ -107,11 +106,12 @@ begin
   if not FileExists(Filename) then
     FileName := Format('%s\%s_local.ini',[ExcludeTrailingPathDelimiter(ExtractFilePath(GetEnvironmentVariable('USERPROFILE')+'\chtilux\')), Info.Domain]);
 
-  Info.LocalPath:=Filename;
+  Info.LocalPath:=ExcludeTrailingPathDelimiter(ExtractFilePath(Filename));
   ini := TIniFile.Create(Filename);
   try
      Info.GlobalPath := ini.ReadString('global','ini path',ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))));
      Info.User.Login:=ini.ReadString('user','login','');
+     Info.User.Password:=ini.ReadString('user','password',Info.DefaultUserPassword);
   finally
     ini.Free;
   end;
@@ -122,6 +122,11 @@ begin
     if not ini.ValueExists('security','public key') then
       ini.WriteString('security','public key', Info.Domain);
     Info.Key:=ini.ReadString('security','public key', Info.Domain);
+
+    if CompareText(Info.User.Password, Info.DefaultUserPassword) <> 0 then
+      //Info.User.Password := Decrypt(Info.Key, Info.User.Password);
+      Info.User.Password := Info.Crypter.Decrypt(Info.User.Password);
+
     Info.ApplicationDescription:=ini.ReadString('application','description','Céline in the Kitchen');
     if Info.ApplicationDescription = '' then
       Info.ApplicationDescription:=Info.Key;
@@ -147,7 +152,7 @@ begin
 
     if not ini.ValueExists('database','dbapwd') then
       ini.WriteString('database','dbapwd',Encrypt(Info.Key, 'scraps'));
-    Info.DBAPwd:=ini.ReadString('database','dbapwd',Encrypt(Info.Key, 'masterkey'));
+    Info.DBAPwd:=ini.ReadString('database','dbapwd', Info.Crypter.Encrypt('masterkey'));
 
     if not ini.ValueExists('database','protocol') then
       ini.WriteString('database','protocol','firebird-3.0');
@@ -160,25 +165,17 @@ begin
   Info.LogGlobalInfos;
 end;
 
-{ TUserInfo }
-
-procedure TUserInfo.SetLogin(AValue: string);
-begin
-  if FLogin=AValue then Exit;
-  FLogin:=AValue.ToUpper;
-end;
-
-procedure TUserInfo.SetPassword(AValue: string);
-begin
-  if FPassword=AValue then Exit;
-  FPassword:=AValue;
-end;
-
 { TInfo }
 
 procedure TInfo.SetLogger(AValue: ILogger);
 begin
   FLogger := AValue;
+end;
+
+procedure TInfo.SetPasswordChar(AValue: Char);
+begin
+  if FPasswordChar=AValue then Exit;
+  FPasswordChar:=AValue;
 end;
 
 procedure TInfo.SetKey(AValue: string);
@@ -192,6 +189,12 @@ begin
   if FLocalPath=AValue then Exit;
   FLocalPath:=AValue;
   SetValue('LocalPath', AValue);
+end;
+
+procedure TInfo.SetLoggedIn(AValue: boolean);
+begin
+  if FLoggedIn=AValue then Exit;
+  FLoggedIn:=AValue;
 end;
 
 procedure TInfo.SetAlias(AValue: string);
@@ -213,6 +216,12 @@ begin
   FCnx:=AValue;
 end;
 
+procedure TInfo.SetCrypter(AValue: IEncrypter);
+begin
+  if FCrypter=AValue then Exit;
+  FCrypter:=AValue;
+end;
+
 procedure TInfo.SetDatabaseRelease(AValue: string);
 begin
   if FDatabaseRelease=AValue then Exit;
@@ -231,6 +240,12 @@ begin
   if FDBAPwd=AValue then Exit;
   FDBAPwd:=AValue;
   SetValue('DBAPwd', AValue);
+end;
+
+procedure TInfo.SetDefaultUserPassword(AValue: string);
+begin
+  if FDefaultUserPassword=AValue then Exit;
+  FDefaultUserPassword:=AValue;
 end;
 
 procedure TInfo.SetDomain(AValue: string);
@@ -254,12 +269,15 @@ begin
   FValues := TStringList.Create;
   Self.Domain := Domain;
   FDatabaseRelease:='0.00';
+  FDefaultUserPassword:=Domain;
+  FLoggedIn := False;
+  FCrypter:=TEncrypter.Create(Domain);
+  FPasswordChar:=#0;
 end;
 
 destructor TInfo.Destroy;
 begin
   FValues.Free;
-  FUser.Free;
   inherited Destroy;
 end;
 

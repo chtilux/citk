@@ -18,7 +18,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="1"/>
+      <BuildNr Value="2"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -31,6 +31,12 @@
       <FormatVersion Value="2"/>
     </RunParams>
     <RequiredPackages>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="RunTimeTypeInfoControls"/>
+      </Item>
       <Item>
         <PackageName Value="LazControls"/>
       </Item>
@@ -82,6 +88,47 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="citk.loginDialog"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.utils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.user.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.persistence.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.encrypt.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.datamodule.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="citkDataModule"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="citk.DataModule"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.datagridform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DataGridForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.DataGridForm"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.dataobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.DataObject"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.firebirddataobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.FirebirdDataObject"/>
       </Unit>
     </Units>
   </ProjectOptions>

@@ -16,6 +16,7 @@ procedure SetLogger(ALogger: ILogger);
 procedure FBCreateDomain(const Domain, DataType, Decorate: string);
 procedure FBCreateTableColumn(const TableName, Column, DataType, Decorate: string);
 procedure FBRecreateTableColumn(const TableName, Column, DataType, Decorate: string);
+procedure FBCreateIndex(const PreDecorate, IndexName, TableName, Columns: string);
 procedure SQLDirect(const sql: string);
 function SelectSQLDirect(const sql: string): TStrings;
 procedure FBAddConstraint(const TableName, Constraint, Name, Columns: string);
@@ -24,6 +25,7 @@ function FBTableExists(const TableName: string): boolean;
 function FBTableColumnExists(const TableName, Column: string): boolean;
 function FBDomainExists(const Domain: string): boolean;
 function FBConstraintExists(const Name: string; out relation_name: string): boolean;
+function FBTableIndexExists(const Name, TableName: string): boolean;
 
 implementation
 
@@ -36,7 +38,8 @@ var
   TableExists,
   TableColumnExists,
   DomainExists,
-  ConstraintExists: TZReadOnlyQuery;
+  ConstraintExists,
+  TableIndexExists: TZReadOnlyQuery;
   Logger: ILogger;
 
 procedure SetConnection(Connection: TZConnection);
@@ -58,6 +61,10 @@ begin
   ConstraintExists.Connection := Cnx;
   if ConstraintExists.Prepared then
     ConstraintExists.Unprepare;
+
+  TableIndexExists.Connection := Cnx;
+  if TableIndexExists.Prepared then
+    TableIndexExists.Unprepare;
 end;
 
 procedure SetLogger(ALogger: ILogger);
@@ -202,18 +209,20 @@ begin
   FBCreateTableColumn(TableName, Column, DataType, Decorate);
 end;
 
+procedure FBCreateIndex(const PreDecorate, IndexName, TableName, Columns: string);
+begin
+  CheckFBConnection;
+  { #todo : Check index exists }
+  if not FBTableIndexExists(IndexName, TableName) then
+    SQLDirect(Format('CREATE %s INDEX %s ON %s (%s)',[PreDecorate, IndexName, TableName, Columns]));
+end;
+
 procedure FBAddConstraint(const TableName, Constraint, Name, Columns: string);
 var
   relation_name: string;
 begin
   if not FBConstraintExists(Constraint, relation_name) then
-    SQLDirect(Format('ALTER TABLE %s ADD CONSTRAINT %s %s (%s)',[TableName, Constraint, Name, Columns]))
-  //else
-  //begin
-  //  Message := Format('Constraint %s(%s) already exists for table %s',[Name, Constraint, relation_name]);
-  //  Log(Message);
-  //  raise EFirebirdConstraint.Create(Message);
-  //end;
+    SQLDirect(Format('ALTER TABLE %s ADD CONSTRAINT %s %s %s',[TableName, Constraint, Name, Columns]))
 end;
 
 function FBDomainExists(const Domain: string): boolean;
@@ -247,6 +256,18 @@ begin
   end;
 end;
 
+function FBTableIndexExists(const Name, TableName: string): boolean;
+begin
+  TableIndexExists.ParamByName('IndexName').AsString:=Name.ToUpper;
+  TableIndexExists.ParamByName('TableName').AsString:=TableName.ToUpper;
+  TableIndexExists.Open;
+  try
+    Result := TableIndexExists.Fields[0].AsString = '1';
+  finally
+    TableIndexExists.Close;
+  end;
+end;
+
 initialization
   Cnx := nil;
   Objects := TFPObjectList.Create(True);
@@ -268,7 +289,15 @@ initialization
   ConstraintExists.SQL.Add('SELECT UPPER(rdb$relation_name)'
                           +' FROM rdb$indices'
                           +' WHERE UPPER(rdb$index_name) = :Name'
-                          +'   AND rdb$system_flag = 0');
+                          +'   AND rdb$system_flag = 0'
+                          +'   AND rdb$index_type IS NULL');
+
+  TableIndexExists := getCursor;
+  TableIndexExists.SQL.Add('SELECT 1 FROM rdb$indices'
+                          +' WHERE UPPER(rdb$relation_name) = :TableName'
+                          +'   AND UPPER(rdb$index_name) = :IndexName'
+                          +'   AND rdb$system_flag = 0'
+                          +'   AND rdb$index_type = 0');
 finalization
   Objects.Free;
 

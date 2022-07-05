@@ -10,10 +10,12 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, zcomponent, mainwindow, SysUtils, Dialogs, lazcontrols
+  Forms, zcomponent, mainwindow, SysUtils, Dialogs, lazcontrols,
+  runtimetypeinfocontrols
   { you can add units after this }
   ,citk.global, citk.Database, Chtilux.Logger, citk.firebird, citk.login,
-  citk.loginDialog;
+  citk.loginDialog, citk.utils, citk.user, citk.persistence, citk.encrypt,
+  citk.DataModule, citk.DataGridForm, citk.DataObject, citk.FirebirdDataObject;
 
 {$R *.res}
 
@@ -69,9 +71,15 @@ begin
       end;
     end;
 
-    Application.CreateForm(TMainW, MainW);
-    MainW.Info := glGlobalInfo;
-    Application.Run;
+    if glGlobalInfo.LoggedIn then
+    begin
+      Application.CreateForm(TMainW, MainW);
+      MainW.Info := glGlobalInfo;
+  Application.CreateForm(TcitkDataModule, citkDataModule);
+  Application.CreateForm(TDataGridForm, DataGridForm);
+      Application.Run;
+    end;
+
   except
     on E:Exception do
         Log(E.Message);
