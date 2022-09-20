@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  ExtCtrls, StdCtrls, Buttons, Menus, ActnList, RTTICtrls, citk.global,
-  citk.DataModule;
+  ExtCtrls,  Buttons, Menus, ActnList, RTTICtrls, citk.global;
 
 type
   { TMainW }

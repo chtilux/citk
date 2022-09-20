@@ -1,6 +1,6 @@
 unit citk.ProductWindow;
 
-{$mode ObjFPC}{$H+}
+{$mode ObjFPC}
 
 interface
 
@@ -16,13 +16,19 @@ type
   { TProductW }
 
   TProductW = class(TDataGridForm)
-    EditSalePriceAction: TAction;
+    DeleteProductionPriceAction: TAction;
+    DeleteSalePriceAction: TAction;
+    DeleteProductionPriceButton: TSpeedButton;
+    UpdateProductionPriceAction: TAction;
+    InsertProductionPriceAction: TAction;
+    UpdateSalePriceAction: TAction;
     InsertSalePriceAction: TAction;
-    InsertSalePriceButton1: TSpeedButton;
+    UpdateSalePriceButton: TSpeedButton;
+    InsertProductionPriceButton: TSpeedButton;
+    UpdateProductionPriceButton: TSpeedButton;
     SalePriceActions: TActionList;
     SalesGrid: TDBGrid;
     ProductionDataGrid: TDBGrid;
-    ProductionDataNav: TDBNavigator;
     DataNavPanel1: TPanel;
     DataNavPanel2: TPanel;
     Label2: TLabel;
@@ -35,20 +41,26 @@ type
     InsertSalePriceButton: TSpeedButton;
     Splitter1: TSplitter;
     SalesQuery: TSQLQuery;
+    DeleteSalePriceButton: TSpeedButton;
     Validity: TDateTimePicker;
     Label1: TLabel;
     procedure DataGridKeyPress(Sender: TObject; var Key: char);
-    procedure EditSalePriceActionExecute(Sender: TObject);
+    procedure DeleteProductionPriceActionExecute(Sender: TObject);
+    procedure DeleteSalePriceActionExecute(Sender: TObject);
+    procedure UpdateSalePriceActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure InsertProductionPriceActionExecute(Sender: TObject);
     procedure InsertSalePriceActionExecute(Sender: TObject);
     procedure SalePriceActionsUpdate(AAction: TBasicAction; var Handled: Boolean
       );
     procedure SalesQueryBeforePost(DataSet: TDataSet);
     procedure SalesQueryNewRecord(DataSet: TDataSet);
+    procedure UpdateProductionPriceActionExecute(Sender: TObject);
   private
-    function CreatePriceWindow(Dataset: TDataset; const Pricetype: string
-      ): TForm;
+    {$H-}
+    function CreatePriceWindow(const Pricetype: string): TForm;
+    procedure DeletePrice(Dataset: TDataset);
     function GetPrimaryKey(Dataset: TDataset; const Fieldname: string): integer; overload;
     function GetPrimaryKey: integer; overload;
     procedure UpdateOrInsertSaleP(Dataset: TDataset; const PType: string;
@@ -190,48 +202,24 @@ begin
   end;
 end;
 
+procedure TProductW.InsertProductionPriceActionExecute(Sender: TObject);
+begin
+  UpdateOrInsertSaleP(ProductionQuery, 'P', uiInsert);
+end;
+
+procedure TProductW.UpdateProductionPriceActionExecute(Sender: TObject);
+begin
+  UpdateOrInsertSaleP(ProductionQuery, 'P', uiUpdate);
+end;
+
 procedure TProductW.InsertSalePriceActionExecute(Sender: TObject);
-//var
-//  F: TForm;
-//  prd: TProducts;
 begin
   UpdateOrInsertSaleP(SalesQuery, 'S', uiInsert);
-//
-//  F := CreatePriceWindow(SalesQuery, 'S');
-//  try
-//
-//    if not SalesQuery.Eof then
-//    begin
-//      TFloatSpinEditEx(F.FindComponent('qtymin')).Value := SalesQuery.FieldByName('qtymin').Value;
-//      TFloatSpinEditEx(F.FindComponent('price')).Value := SalesQuery.FieldByName('price').Value;
-//    end;
-//
-//    if F.ShowModal = mrOk then
-//    begin
-//      with TSQLQuery.Create(nil) do
-//      begin
-//        try
-//          SQLConnection:=Self.DataObject.Connector;
-//          Transaction:= Self.DataObject.Transaction;
-//          prd := TProducts.Create;
-//          SQL.Add(prd.GetInsertPriceSQL);
-//          ParamByname('serprc').Value := GetPrimaryKey;
-//          ParamByname('serprd').Value := Query.FieldByName('serprd').AsInteger;
-//          ParamByname('dateff').Value := TDateTimePicker(F.FindComponent('dateff')).Date;
-//          ParamByName('qtymin').Value := TFloatSpinEditEx(F.FindComponent('qtymin')).Value;
-//          ParamByName('price').Value := TFloatSpinEditEx(F.FindComponent('price')).Value;
-//          ParamByName('ptype').Value := 'S';
-//          ExecSQL;
-//          Self.DataObject.Transaction.CommitRetaining;
-//          Self.SalesQuery.Refresh;
-//        finally
-//          Free;
-//        end;
-//      end;
-//    end;
-//  finally
-//    F.Free;
-//  end;
+end;
+
+procedure TProductW.UpdateSalePriceActionExecute(Sender: TObject);
+begin
+  UpdateOrInsertSaleP(SalesQuery, 'S', uiUpdate);
 end;
 
 procedure TProductW.UpdateOrInsertSaleP(Dataset: TDataset; const PType: string; const Mode: TUpdateOrInsertMode);
@@ -239,15 +227,15 @@ var
   F: TForm;
   prd: TProducts;
 begin
-  F := CreatePriceWindow(Dataset, PType);
+  F := CreatePriceWindow(PType);
   try
 
-    if not SalesQuery.Eof then
+    if not Dataset.Eof then
     begin
-      TFloatSpinEditEx(F.FindComponent('qtymin')).Value := SalesQuery.FieldByName('qtymin').Value;
-      TFloatSpinEditEx(F.FindComponent('price')).Value := SalesQuery.FieldByName('price').Value;
+      TFloatSpinEditEx(F.FindComponent('qtymin')).Value := Dataset.FieldByName('qtymin').AsFloat;
+      TFloatSpinEditEx(F.FindComponent('price')).Value := Dataset.FieldByName('price').AsFloat;
       if Mode = uiUpdate then
-        TDateTimePicker(F.FindComponent('dateff')).Date := SalesQuery.FieldByName('dateff').AsDateTime;
+        TDateTimePicker(F.FindComponent('dateff')).Date := Dataset.FieldByName('dateff').AsDateTime;
     end;
 
     if F.ShowModal = mrOk then
@@ -261,21 +249,31 @@ begin
           case Mode of
             uiUpdate : begin
               SQL.Add(prd.GetUpdatePriceSQL);
-              ParamByname('serprc').Value := SalesQuery.FieldByName('serprc').Value;
+              ParamByname('serprc').Value := Dataset.FieldByName('serprc').Value;
             end;
             uiInsert : begin
               SQL.Add(prd.GetInsertPriceSQL);
-              ParamByname('serprc').Value := GetPrimaryKey;
-              ParamByname('serprd').Value := Query.FieldByName('serprd').AsInteger;
-              ParamByName('ptype').Value := PType;
+              ParamByname('serprc').AsInteger := GetPrimaryKey;
+              ParamByname('serprd').AsInteger := Query.FieldByName('serprd').AsInteger;
+              ParamByName('ptype').AsString := PType;
             end;
           end;
-          ParamByname('dateff').Value := TDateTimePicker(F.FindComponent('dateff')).Date;
-          ParamByName('qtymin').Value := TFloatSpinEditEx(F.FindComponent('qtymin')).Value;
-          ParamByName('price').Value := TFloatSpinEditEx(F.FindComponent('price')).Value;
-          ExecSQL;
-          Self.DataObject.Transaction.CommitRetaining;
-          Dataset.Refresh;
+          ParamByname('dateff').AsDate := TDateTimePicker(F.FindComponent('dateff')).Date;
+          ParamByName('qtymin').AsFloat := TFloatSpinEditEx(F.FindComponent('qtymin')).Value;
+          ParamByName('price').AsFloat := TFloatSpinEditEx(F.FindComponent('price')).Value;
+          try
+            ExecSQL;
+            Self.DataObject.Transaction.CommitRetaining;
+            Dataset.Refresh;
+          except
+            on E:EDatabaseError do
+            begin
+              if Pos('I01_PRICES', E.Message) > 0 then
+                MessageDlg('A price already exists for this validity date', mtError, [mbOk], 0)
+              else
+                raise;
+            end;
+          end;
         finally
           Free;
         end;
@@ -286,14 +284,12 @@ begin
   end;
 end;
 
-function TProductW.CreatePriceWindow(Dataset: TDataset; const Pricetype: string): TForm;
+function TProductW.CreatePriceWindow(const Pricetype: string): TForm;
 var
   F: TForm;
-  alabel: TLabel;
   dateff: TDateTimePicker;
   qtymin: TFloatSpinEditEx;
   price: TFloatSpinEditEx;
-  ptype: string;
   OkButton: TBitBtn;
 
   function CreateLabel(const Caption: string; const X,Y: integer):TLabel;
@@ -366,53 +362,14 @@ begin
   end;
 end;
 
-procedure TProductW.EditSalePriceActionExecute(Sender: TObject);
-//var
-//  F: TForm;
-//  prd: TProducts;
-begin
-  UpdateOrInsertSaleP(SalesQuery, 'S', uiUpdate);
-  //F := CreatePriceWindow(SalesQuery, 'S');
-  //try
-  //
-  //  if not SalesQuery.Eof then
-  //  begin
-  //    TDateTimePicker(F.FindComponent('dateff')).Date := SalesQuery.FieldByName('dateff').AsDateTime;
-  //    TFloatSpinEditEx(F.FindComponent('qtymin')).Value := SalesQuery.FieldByName('qtymin').Value;
-  //    TFloatSpinEditEx(F.FindComponent('price')).Value := SalesQuery.FieldByName('price').Value;
-  //  end;
-  //
-  //  if F.ShowModal = mrOk then
-  //  begin
-  //    with TSQLQuery.Create(nil) do
-  //    begin
-  //      try
-  //        SQLConnection:=Self.DataObject.Connector;
-  //        Transaction:= Self.DataObject.Transaction;
-  //        prd := TProducts.Create;
-  //        SQL.Add(prd.GetUpdatePriceSQL);
-  //        ParamByname('serprc').Value := SalesQuery.FieldByName('serprc').Value;
-  //        ParamByname('dateff').Value := TDateTimePicker(F.FindComponent('dateff')).Date;
-  //        ParamByName('qtymin').Value := TFloatSpinEditEx(F.FindComponent('qtymin')).Value;
-  //        ParamByName('price').Value := TFloatSpinEditEx(F.FindComponent('price')).Value;
-  //        ExecSQL;
-  //        Self.DataObject.Transaction.CommitRetaining;
-  //        Self.SalesQuery.Refresh;
-  //      finally
-  //        Free;
-  //      end;
-  //    end;
-  //  end;
-  //finally
-  //  F.Free;
-  //end;
-end;
-
 procedure TProductW.SalePriceActionsUpdate(AAction: TBasicAction;
   var Handled: Boolean);
 begin
-  InsertSalePriceAction.Enabled:=not(Query.EOF) and (Query.State = dsBrowse);
-  EditSalePriceAction.Enabled:=not(SalesQuery.Eof) and (SalesQuery.State = dsBrowse);
+  InsertSalePriceAction.Enabled:=not(Query.EOF);
+  UpdateSalePriceAction.Enabled:=not(SalesQuery.Eof);
+  InsertProductionPriceAction.Enabled:=not(Query.EOF);
+  UpdateProductionPriceAction.Enabled:=not(ProductionQuery.Eof);
+  DeleteSalePriceAction.Enabled:=not(SalesQuery.Eof);
   Handled := True;
 end;
 
@@ -420,6 +377,40 @@ procedure TProductW.DataGridKeyPress(Sender: TObject; var Key: char);
 begin
   if CompareText(TDBGrid(Sender).SelectedField.FieldName,'libprd')<>0 then
     Key := UpCase(Key);
+end;
+
+procedure TProductW.DeleteProductionPriceActionExecute(Sender: TObject);
+begin
+  DeletePrice(ProductionQuery);
+end;
+
+procedure TProductW.DeleteSalePriceActionExecute(Sender: TObject);
+begin
+  DeletePrice(SalesQuery);
+end;
+
+procedure TProductW.DeletePrice(Dataset: TDataset);
+var
+  prd: IProducts;
+begin
+  if MessageDlg('Confirm price delete ?', mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
+  begin
+    with TSQLQuery.Create(nil) do
+    begin
+      try
+        SQLConnection:=Self.DataObject.Connector;
+        Transaction:=Self.DataObject.Transaction;
+        prd := TProducts.Create;
+        SQL.Add(prd.GetDeletePriceSQL);
+        Params[0].AsInteger:=Dataset.FieldByname('serprc').AsInteger;
+        ExecSQL;
+        Self.DataObject.Transaction.CommitRetaining;
+        Dataset.Refresh;
+      finally
+        Free;
+      end;
+    end;
+  end;
 end;
 
 procedure TProductW.SalesQueryBeforePost(DataSet: TDataSet);
@@ -455,13 +446,13 @@ end;
 
 procedure TProductW.SalesQueryNewRecord(DataSet: TDataSet);
 begin
-  Dataset.FieldByName('serprd').Value:=Query.FieldByName('serprd').AsInteger;
-  Dataset.FieldByName('dateff').Value:= Validity.Date;
-  Dataset.FieldByName('qtymin').Value:=1;
+  Dataset.FieldByName('serprd').AsInteger:=Query.FieldByName('serprd').AsInteger;
+  Dataset.FieldByName('dateff').AsDateTime:= Validity.Date;
+  Dataset.FieldByName('qtymin').AsFloat:=1;
   if Dataset = SalesQuery then
-     Dataset.FieldByName('ptype').Value:='S';
+     Dataset.FieldByName('ptype').AsString:='S';
   if Dataset = ProductionQuery then
-     Dataset.FieldByName('ptype').Value:='P';
+     Dataset.FieldByName('ptype').AsString:='P';
 end;
 
 procedure TProductW.QueryPostError(DataSet: TDataSet; E: EDatabaseError;

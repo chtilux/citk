@@ -59,6 +59,7 @@ type
     function GetPKSQL: string;
     function GetPriceSQL(const AType: string): string;
     function GetInsertPriceSQL: string;
+    function GetUpdatePriceSQL: string;
   end;
 
   { TProducts }
@@ -69,6 +70,7 @@ type
     function GetPKSQL: string;
     function GetPriceSQL(const AType: string): string;
     function GetInsertPriceSQL: string;
+    function GetUpdatePriceSQL: string;
   end;
 
 implementation
@@ -103,6 +105,15 @@ function TProducts.GetInsertPriceSQL: string;
 begin
   Result := 'INSERT INTO prices(serprc,serprd,dateff,qtymin,price,ptype)'
            +' VALUES (:serprc,:serprd,:dateff,:qtymin,:price,:ptype)';
+end;
+
+function TProducts.GetUpdatePriceSQL: string;
+begin
+  Result := 'UPDATE prices'
+           +' SET dateff = :dateff'
+           +'    ,qtymin = :qtymin'
+           +'    ,price  = :price'
+           +' WHERE serprc = :serprc';
 end;
 
 { TPersistence }

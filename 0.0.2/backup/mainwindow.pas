@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  ExtCtrls, StdCtrls, Buttons, Menus, ActnList, RTTICtrls, citk.global,
+  ExtCtrls,  Buttons, Menus, ActnList, RTTICtrls, citk.global,
   citk.DataModule;
 
 type
@@ -100,11 +100,13 @@ end;
 
 procedure TMainW.DisplayDictionary;
 begin
-  citk.dictionary.DisplayDictionary ;
+  glGlobalInfo.Log('DisplayDictionary');
+  citk.dictionary.DisplayDictionary;
 end;
 
 procedure TMainW.DisplayProducts;
 begin
+  glGlobalInfo.Log('DisplayProducts');
   citk.ProductWindow.DisplayProducts;
 end;
 

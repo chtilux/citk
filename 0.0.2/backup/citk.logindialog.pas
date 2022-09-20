@@ -66,7 +66,7 @@ implementation
 {$R *.lfm}
 
 uses
-  Inifiles, Windows, citk.persistence;
+  Inifiles, Chtilux.Crypt, ZDataset, Windows, citk.persistence;
 
 { TLoginW }
 
