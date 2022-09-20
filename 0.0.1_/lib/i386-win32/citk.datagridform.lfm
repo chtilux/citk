@@ -1,0 +1,87 @@
+object DataGridForm: TDataGridForm
+  Left = 658
+  Height = 507
+  Top = 273
+  Width = 709
+  Caption = 'DataGridForm'
+  ClientHeight = 507
+  ClientWidth = 709
+  LCLVersion = '2.2.2.0'
+  object TopPanel: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 709
+    Align = alTop
+    TabOrder = 0
+  end
+  object BottomPanel: TPanel
+    Left = 0
+    Height = 50
+    Top = 457
+    Width = 709
+    Align = alBottom
+    TabOrder = 1
+  end
+  object WorkingSpacePanel: TPanel
+    Left = 0
+    Height = 407
+    Top = 50
+    Width = 709
+    Align = alClient
+    BorderWidth = 3
+    ClientHeight = 407
+    ClientWidth = 709
+    TabOrder = 2
+    object DataStatusBar: TStatusBar
+      Left = 4
+      Height = 23
+      Top = 380
+      Width = 701
+      Panels = <>
+    end
+    object DataNavPanel: TPanel
+      Left = 4
+      Height = 29
+      Top = 4
+      Width = 701
+      Align = alTop
+      ClientHeight = 29
+      ClientWidth = 701
+      TabOrder = 1
+      object DataNav: TDBNavigator
+        Left = 458
+        Height = 25
+        Top = 1
+        Width = 241
+        Anchors = [akTop, akRight]
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsScaleChilds
+        ChildSizing.EnlargeVertical = crsScaleChilds
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 100
+        ClientHeight = 25
+        ClientWidth = 241
+        Options = []
+        TabOrder = 0
+      end
+    end
+    object DataGrid: TDBGrid
+      Left = 4
+      Height = 347
+      Top = 33
+      Width = 701
+      Align = alClient
+      Color = clWindow
+      Columns = <>
+      DataSource = DataSource
+      TabOrder = 2
+    end
+  end
+  object DataSource: TDataSource
+    Left = 464
+    Top = 96
+  end
+end

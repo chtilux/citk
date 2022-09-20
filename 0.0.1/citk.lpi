@@ -117,6 +117,7 @@
         <Filename Value="citk.datagridform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DataGridForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="citk.DataGridForm"/>
       </Unit>

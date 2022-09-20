@@ -8,10 +8,10 @@
       <Unit>
         <Filename Value="citk.lpr"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="17"/>
         <CursorPos X="16" Y="43"/>
         <UsageCount Value="205"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="mainwindow.pas"/>
@@ -19,29 +19,25 @@
         <ComponentName Value="MainW"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="9" Y="62"/>
         <UsageCount Value="205"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="citk.database.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="236"/>
         <CursorPos Y="279"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="citk.global.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="54"/>
         <CursorPos X="14" Y="72"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="citk.firebird.pas"/>
@@ -54,11 +50,10 @@
       <Unit>
         <Filename Value="citk.login.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="15"/>
         <CursorPos X="57" Y="27"/>
         <UsageCount Value="238"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="citk.logindialog.pas"/>
@@ -67,15 +62,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="citk.loginDialog"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="133"/>
         <CursorPos X="29" Y="120"/>
         <UsageCount Value="231"/>
         <Bookmarks Count="1">
           <Item0 Y="229" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="citk.utils.pas"/>
@@ -87,11 +80,10 @@
       <Unit>
         <Filename Value="citk.user.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="98"/>
         <CursorPos Y="105"/>
-        <UsageCount Value="179"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="225"/>
       </Unit>
       <Unit>
         <Filename Value="citk.persistence.pas"/>
@@ -99,7 +91,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="106"/>
         <CursorPos Y="111"/>
-        <UsageCount Value="178"/>
+        <UsageCount Value="224"/>
       </Unit>
       <Unit>
         <Filename Value="citk.encrypt.pas"/>
@@ -107,7 +99,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <CursorPos X="48" Y="71"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="215"/>
       </Unit>
       <Unit>
         <Filename Value="citk.datamodule.pas"/>
@@ -116,18 +108,45 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="citk.DataModule"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="43" Y="13"/>
-        <UsageCount Value="49"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="95"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.datagridform.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DataGridForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.DataGridForm"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4"/>
+        <CursorPos X="27" Y="42"/>
+        <UsageCount Value="94"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.dataobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.DataObject"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="45" Y="12"/>
+        <UsageCount Value="90"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.firebirddataobject.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.FirebirdDataObject"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="9" Y="13"/>
+        <UsageCount Value="90"/>
       </Unit>
       <Unit>
         <Filename Value="citk.globals.pas"/>
         <UnitName Value="citk.Globals"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="13"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="30"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\abattoir\units\unitAeLogin.pas"/>
@@ -135,70 +154,27 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="209"/>
         <CursorPos X="43" Y="261"/>
-        <UsageCount Value="18"/>
-      </Unit>
-      <Unit>
-        <Filename Value="..\..\abattoir\units\UnitAEGlobal.pas"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="760"/>
-        <CursorPos X="65" Y="776"/>
-        <UsageCount Value="1"/>
-        <Bookmarks Count="1">
-          <Item0 X="15" Y="715" ID="1"/>
-        </Bookmarks>
+        <UsageCount Value="13"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\..\..\vcl\lib\chtilux.utils.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="23" Y="10"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\..\lazarus-main\lcl\postscriptcanvas.pas"/>
         <UnitName Value="PostScriptCanvas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="61"/>
-        <UsageCount Value="7"/>
-      </Unit>
-      <Unit>
-        <Filename Value="citk.datagridform.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="DataGridForm"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="citk.DataGridForm"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="4"/>
-        <CursorPos X="27" Y="42"/>
-        <UsageCount Value="48"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="citk.dataobject.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="citk.DataObject"/>
-        <EditorIndex Value="3"/>
-        <CursorPos X="45" Y="12"/>
-        <UsageCount Value="44"/>
-        <Loaded Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="citk.firebirddataobject.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="citk.FirebirdDataObject"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
-        <CursorPos X="9" Y="13"/>
-        <UsageCount Value="44"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="2"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\..\..\vcl\zeos\7.2.14\src\component\ZConnection.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="42"/>
         <CursorPos X="37" Y="71"/>
-        <UsageCount Value="22"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="45"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -206,107 +182,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="76"/>
         <CursorPos X="3" Y="101"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="23">
-      <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="266" TopLine="235"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="20" Column="15" TopLine="20"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="19" Column="15" TopLine="19"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="20" Column="15" TopLine="20"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="19" Column="15" TopLine="19"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="9" Column="34"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datamodule.pas"/>
-        <Caret Line="11" Column="13"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="9" Column="78"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="58" TopLine="31"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="25" TopLine="5"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="26" TopLine="5"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="27" TopLine="5"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="28" TopLine="5"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="29" TopLine="5"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="59" Column="9" TopLine="40"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="60" Column="9" TopLine="41"/>
-      </Position>
-      <Position>
-        <Filename Value="mainwindow.pas"/>
-        <Caret Line="61" Column="9" TopLine="42"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datagridform.pas"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datagridform.pas"/>
-        <Caret Line="27" Column="92"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datagridform.pas"/>
-        <Caret Line="43" Column="28"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datagridform.pas"/>
-        <Caret Line="25" Column="30" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datagridform.pas"/>
-        <Caret Line="26" Column="30" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="citk.datagridform.pas"/>
-        <Caret Line="25" Column="30" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="..\..\..\..\vcl\zeos\7.2.14\src\component\ZConnection.pas"/>
-        <Caret Line="71" Column="37" TopLine="42"/>
-      </Position>
-    </JumpHistory>
+    <General>
+      <ActiveWindowIndexAtStart Value="-1"/>
+    </General>
+    <JumpHistory HistoryIndex="-1"/>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes ActiveMode=""/>

@@ -1,7 +1,7 @@
 object LoginW: TLoginW
-  Left = 821
+  Left = 822
   Height = 306
-  Top = 357
+  Top = 358
   Width = 320
   Caption = 'Database Login'
   ClientHeight = 306

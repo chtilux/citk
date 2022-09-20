@@ -1,0 +1,252 @@
+inherited ProductW: TProductW
+  Left = 379
+  Height = 585
+  Top = 233
+  Width = 765
+  Caption = 'Products'
+  ClientHeight = 585
+  ClientWidth = 765
+  OnCreate = FormCreate
+  OnShow = FormShow
+  inherited TopPanel: TPanel
+    Width = 765
+    ClientWidth = 765
+    object Label1: TLabel[0]
+      Left = 21
+      Height = 15
+      Top = 17
+      Width = 44
+      Caption = 'Validity :'
+      ParentColor = False
+    end
+    object Validity: TDateTimePicker[1]
+      Left = 75
+      Height = 23
+      Top = 13
+      Width = 83
+      CenturyFrom = 1941
+      MaxDate = 2958465
+      MinDate = -53780
+      TabOrder = 0
+      TrailingSeparator = False
+      TextForNullDate = 'NULL'
+      LeadingZeros = True
+      Kind = dtkDate
+      TimeFormat = tf24
+      TimeDisplay = tdHMS
+      DateMode = dmComboBox
+      Date = 44817
+      Time = 0.481237280095229
+      UseDefaultSeparators = True
+      HideDateTimeParts = []
+      MonthNames = 'Long'
+    end
+  end
+  inherited BottomPanel: TPanel
+    Height = 291
+    Top = 294
+    Width = 765
+    ClientHeight = 291
+    ClientWidth = 765
+    object SalesPanel: TPanel[0]
+      Left = 1
+      Height = 289
+      Top = 1
+      Width = 386
+      Align = alLeft
+      ClientHeight = 289
+      ClientWidth = 386
+      TabOrder = 0
+      object DataNavPanel1: TPanel
+        Left = 1
+        Height = 29
+        Top = 1
+        Width = 384
+        Align = alTop
+        ClientHeight = 29
+        ClientWidth = 384
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        object Label2: TLabel
+          Left = 8
+          Height = 15
+          Top = 8
+          Width = 69
+          Caption = 'SALES PRICE'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object InsertSalePriceButton: TSpeedButton
+          Left = 264
+          Height = 22
+          Hint = 'Insert new sale price'
+          Top = 4
+          Width = 23
+          Action = InsertSalePriceAction
+          Anchors = [akTop, akRight]
+        end
+        object InsertSalePriceButton1: TSpeedButton
+          Left = 287
+          Height = 22
+          Hint = 'Edit current sale price'
+          Top = 4
+          Width = 23
+          Action = EditSalePriceAction
+          Anchors = [akTop, akRight]
+        end
+      end
+      object SalesGrid: TDBGrid
+        Left = 1
+        Height = 258
+        Top = 30
+        Width = 384
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = SalesDataSource
+        ReadOnly = True
+        TabOrder = 1
+      end
+    end
+    object Splitter1: TSplitter[1]
+      Left = 387
+      Height = 289
+      Top = 1
+      Width = 5
+    end
+    object ProductionPanel: TPanel[2]
+      Left = 392
+      Height = 289
+      Top = 1
+      Width = 372
+      Align = alClient
+      ClientHeight = 289
+      ClientWidth = 372
+      TabOrder = 2
+      object DataNavPanel2: TPanel
+        Left = 1
+        Height = 29
+        Top = 1
+        Width = 370
+        Align = alTop
+        ClientHeight = 29
+        ClientWidth = 370
+        TabOrder = 0
+        object ProductionDataNav: TDBNavigator
+          Left = 127
+          Height = 25
+          Top = 1
+          Width = 241
+          Anchors = [akTop, akRight]
+          BevelOuter = bvNone
+          ChildSizing.EnlargeHorizontal = crsScaleChilds
+          ChildSizing.EnlargeVertical = crsScaleChilds
+          ChildSizing.ShrinkHorizontal = crsScaleChilds
+          ChildSizing.ShrinkVertical = crsScaleChilds
+          ChildSizing.Layout = cclLeftToRightThenTopToBottom
+          ChildSizing.ControlsPerLine = 100
+          ClientHeight = 25
+          ClientWidth = 241
+          DataSource = ProductionDataSource
+          Flat = True
+          Options = []
+          TabOrder = 0
+        end
+        object Label3: TLabel
+          Left = 8
+          Height = 15
+          Top = 8
+          Width = 68
+          Caption = 'PROD PRICE'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+      end
+      object ProductionDataGrid: TDBGrid
+        Left = 1
+        Height = 258
+        Top = 30
+        Width = 370
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        DataSource = ProductionDataSource
+        ReadOnly = True
+        TabOrder = 1
+      end
+    end
+  end
+  inherited WorkingSpacePanel: TPanel
+    Height = 244
+    Width = 765
+    ClientHeight = 244
+    ClientWidth = 765
+    inherited DataStatusBar: TStatusBar
+      Top = 217
+      Width = 757
+    end
+    inherited DataNavPanel: TPanel
+      Width = 757
+      ClientWidth = 757
+      inherited DataNav: TDBNavigator
+        Left = 514
+        Hints.Strings = (        )
+      end
+    end
+    inherited DataGrid: TDBGrid
+      Height = 184
+      Width = 757
+      OnKeyPress = DataGridKeyPress
+    end
+  end
+  inherited DataSource: TDataSource
+    Left = 504
+    Top = 104
+  end
+  object SalesDataSource: TDataSource[4]
+    DataSet = SalesQuery
+    Left = 184
+    Top = 408
+  end
+  object ProductionDataSource: TDataSource[5]
+    DataSet = ProductionQuery
+    Left = 800
+    Top = 416
+  end
+  object SalesQuery: TSQLQuery[6]
+    FieldDefs = <>
+    BeforePost = SalesQueryBeforePost
+    OnNewRecord = SalesQueryNewRecord
+    Params = <>
+    Macros = <>
+    DataSource = DataSource
+    Left = 184
+    Top = 472
+  end
+  object ProductionQuery: TSQLQuery[7]
+    FieldDefs = <>
+    BeforePost = SalesQueryBeforePost
+    OnNewRecord = SalesQueryNewRecord
+    Params = <>
+    Macros = <>
+    DataSource = DataSource
+    Left = 800
+    Top = 472
+  end
+  object SalePriceActions: TActionList[8]
+    OnUpdate = SalePriceActionsUpdate
+    Left = 184
+    Top = 352
+    object InsertSalePriceAction: TAction
+      Caption = '+'
+      OnExecute = InsertSalePriceActionExecute
+    end
+    object EditSalePriceAction: TAction
+      Caption = '^'
+      OnExecute = EditSalePriceActionExecute
+    end
+  end
+end

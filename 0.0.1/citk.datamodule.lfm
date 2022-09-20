@@ -1,8 +1,8 @@
 object citkDataModule: TcitkDataModule
   OldCreateOrder = False
   Height = 253
-  HorizontalOffset = 373
-  VerticalOffset = 146
+  HorizontalOffset = 374
+  VerticalOffset = 147
   Width = 340
   object citk16ImageList: TImageList
     Left = 134
