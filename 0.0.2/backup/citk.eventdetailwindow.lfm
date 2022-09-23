@@ -1,0 +1,149 @@
+object EventDetailW: TEventDetailW
+  Left = 508
+  Height = 510
+  Top = 342
+  Width = 716
+  Caption = 'Event'
+  ClientHeight = 510
+  ClientWidth = 716
+  OnShow = FormShow
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 510
+    Top = 0
+    Width = 320
+    Align = alLeft
+    BorderWidth = 3
+    ClientHeight = 510
+    ClientWidth = 320
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 4
+      Height = 15
+      Top = 4
+      Width = 312
+      Align = alTop
+      Alignment = taCenter
+      Caption = 'PRODUCTS'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object ProductsView: TListView
+      Left = 4
+      Height = 487
+      Top = 19
+      Width = 312
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Description'
+          Width = 230
+        end      
+        item
+          Caption = 'Price'
+          Width = 60
+        end>
+      MultiSelect = True
+      ReadOnly = True
+      RowSelect = True
+      TabOrder = 0
+      ViewStyle = vsReport
+      OnDblClick = AddToSelectionActionExecute
+    end
+  end
+  object Panel2: TPanel
+    Left = 320
+    Height = 510
+    Top = 0
+    Width = 64
+    Align = alLeft
+    ClientHeight = 510
+    ClientWidth = 64
+    TabOrder = 1
+    object BitBtn1: TBitBtn
+      Left = 8
+      Height = 30
+      Top = 108
+      Width = 48
+      Action = AddToSelectionAction
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn
+      Left = 8
+      Height = 30
+      Top = 144
+      Width = 48
+      Action = RemoveFromSelectionAction
+      TabOrder = 1
+    end
+    object BitBtn3: TBitBtn
+      Left = 8
+      Height = 30
+      Top = 189
+      Width = 48
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      TabOrder = 2
+    end
+  end
+  object Panel3: TPanel
+    Left = 384
+    Height = 510
+    Top = 0
+    Width = 332
+    Align = alClient
+    ClientHeight = 510
+    ClientWidth = 332
+    TabOrder = 2
+    object Label2: TLabel
+      Left = 1
+      Height = 15
+      Top = 1
+      Width = 330
+      Align = alTop
+      Alignment = taCenter
+      Caption = 'SELECTION'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object SelectionView: TListView
+      Left = 1
+      Height = 493
+      Top = 16
+      Width = 330
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Description'
+          Width = 230
+        end      
+        item
+          Caption = 'Price'
+          Width = 60
+        end>
+      MultiSelect = True
+      ReadOnly = True
+      RowSelect = True
+      TabOrder = 0
+      ViewStyle = vsReport
+      OnDblClick = SelectionViewDblClick
+    end
+  end
+  object ActionList1: TActionList
+    OnUpdate = ActionList1Update
+    Left = 345
+    Top = 213
+    object AddToSelectionAction: TAction
+      Caption = '>'
+      OnExecute = AddToSelectionActionExecute
+    end
+    object RemoveFromSelectionAction: TAction
+      Caption = '<'
+      OnExecute = RemoveFromSelectionActionExecute
+    end
+  end
+end

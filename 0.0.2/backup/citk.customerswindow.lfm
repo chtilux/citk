@@ -1,0 +1,69 @@
+inherited CustomersW: TCustomersW
+  Height = 751
+  Top = 189
+  Width = 580
+  ClientHeight = 751
+  ClientWidth = 580
+  OnCreate = FormCreate
+  inherited TopPanel: TPanel
+    Width = 580
+  end
+  inherited BottomPanel: TPanel
+    Top = 701
+    Width = 580
+  end
+  inherited WorkingSpacePanel: TPanel
+    Height = 651
+    Width = 580
+    ClientHeight = 651
+    ClientWidth = 580
+    inherited DataStatusBar: TStatusBar
+      Top = 624
+      Width = 572
+    end
+    inherited DataNavPanel: TPanel
+      Width = 572
+      ClientWidth = 572
+      inherited DataNav: TDBNavigator
+        Left = 329
+        Top = 0
+        Hints.Strings = (        )
+        OnClick = DataNavClick
+      end
+      object Label1: TLabel[1]
+        Left = 23
+        Height = 15
+        Top = 7
+        Width = 41
+        Caption = 'Search :'
+        ParentColor = False
+      end
+      object SearchEdit: TEdit[2]
+        Left = 72
+        Height = 23
+        Top = 2
+        Width = 248
+        CharCase = ecUppercase
+        OnChange = SearchEditChange
+        TabOrder = 1
+        TextHint = 'Type in to find a customer by its name'
+      end
+    end
+    inherited DataGrid: TDBGrid
+      Height = 591
+      Width = 523
+      OnKeyPress = DataGridKeyPress
+    end
+    object CustomersTab: TTabControl[3]
+      Left = 527
+      Height = 591
+      Top = 33
+      Width = 49
+      OnChange = CustomersTabChange
+      TabPosition = tpRight
+      TabWidth = 21
+      Align = alRight
+      TabOrder = 3
+    end
+  end
+end

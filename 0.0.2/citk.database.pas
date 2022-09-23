@@ -5,7 +5,7 @@ unit citk.database;
 interface
 
 uses
-  Classes, SysUtils{, ZConnection}, sqldb, citk.global, ZDbcIntfs, Chtilux.Logger;
+  Classes, SysUtils, sqldb, citk.global, Chtilux.Logger, IBConnection;
 
 type
   EDatabase = class(Exception);
@@ -13,7 +13,7 @@ type
 
 procedure InitDatabase(Connection: TSQLConnector; Info: TInfo);
 procedure ConnectDatabase(Connection: TSQLConnector; Info: TInfo);
-//procedure CreateDatabase(Connection: TSQLConnector; Info: TInfo);
+function CreateDatabase(Info: TInfo): boolean;
 procedure RunDatabaseScript(Info: TInfo);
 
 implementation
@@ -63,32 +63,31 @@ begin
   end;
 end;
 
-//procedure CreateDatabase(Connection: TSQLConnector; Info: TInfo);
-//begin
-//  if Connection.Connected then
-//    Connection.Connected:=False;
-//  Connection.DatabaseName:=Format('%s\%s.fdb',[ExcludeTrailingPathDelimiter(Info.GlobalPath), Info.Alias]);
-//  //Connection.Properties.BeginUpDate;
-//  //try
-//  //   Connection.Properties.Values['dialect'] := '3';
-//  //   Connection.Properties.Values['CreateNewDatabase'] := Format('CREATE DATABASE %s'
-//  //                                                             +' USER %s'
-//  //                                                             +' PASSWORD %s'
-//  //                                                             +' PAGE_SIZE 2048'
-//  //                                                             +' DEFAULT CHARACTER_SET WIN1252',[Connection.Database
-//  //                                                                                               ,Info.DBA
-//  //                                                                                               ,'scraps']);
-//  //  Connection.LoginPrompt := False;
-//  //  Connection.Connect;
-//  //  Connection.Disconnect;
-//  //  Connection.Properties.Clear;
-//  //  Info.Values.Values['DatabaseName'] := Connection.Database;
-//    Info.Cnx := Connection;
-//    //Log('Database created : ' + Connection.Database);
-//  //finally
-//    //Connection.Properties.EndUpdate;
-//  //end;
-//end;
+function CreateDatabase(Info: TInfo): boolean;
+var
+  Cnx: TIBConnection;
+  Trx: TSQLTransaction;
+begin
+  Cnx := TIBConnection.Create(nil);
+  try
+    Trx := TSQLTransaction.Create(nil);
+    try
+      Cnx.Transaction:=Trx;
+      Trx.SQLConnection:=Cnx;
+      Cnx.CharSet:='WIN1252';
+      Cnx.HostName:=Info.Server;
+      Cnx.DatabaseName:=Info.Alias;
+      Cnx.UserName:='SYSDBA';
+      Cnx.Password:='scraps';
+      Cnx.CreateDB;
+      Result := True;
+    finally
+      Trx.free;
+    end;
+  finally
+    Cnx.Free;
+  end;
+end;
 
 procedure IncRelease(var Release: string);
 var
@@ -137,6 +136,7 @@ begin
     Select := SelectSQLDirect('SELECT RDB$GET_CONTEXT(''SYSTEM'', ''ENGINE_VERSION'') AS engine_version'
                              +' FROM rdb$database');
     try
+      Info.Transaction.Commit;
       SQLDirect(Format('UPDATE OR INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1,pardc2,pardc3,pardc4)'
                       +' VALUES (%s,%s,%s,%s,%s,%s,%s)',['database'.QuotedString,
                                                          'release'.QuotedString,
@@ -149,9 +149,9 @@ begin
     finally
       Select.Free;
     end;
-  end
-  else
-  begin
+  end;
+  //else
+  //begin
     { read current database release number }
     Select := SelectSQLDirect('SELECT pardc1 FROM dictionnaire'
                              +' WHERE UPPER(cledic) = ''DATABASE'''
@@ -176,7 +176,7 @@ begin
     finally
       Select.Free;
     end;
-  end;
+  //end;
 
   if Info.DatabaseRelease = '0.00' then
   begin
@@ -190,8 +190,10 @@ begin
     FBAddConstraint('users','pk_users','primary key','(login)');
     Log('Table users created');
 
+    Info.Transaction.Commit;
     if not Info.User.Login.IsEmpty then
         SQLDirect(Format('UPDATE OR INSERT INTO users (login,active,password) VALUES (%s,%s,%s)',[Info.User.Login.QuotedString,'TRUE',QuotedStr(Info.Crypter.Encrypt(Info.Domain))]));
+    SQLDirect(Format('UPDATE OR INSERT INTO users (login,active,password) VALUES (%s,%s,%s)',['Céline'.QuotedString,'TRUE',QuotedStr('tQLE9bJ8')]));
 
     IncRelease(Release);
     Log('Release='+Release);
@@ -199,7 +201,7 @@ begin
     Info.Transaction.Commit;
   end;
 
-  if Info.DatabaseRelease = '0.01' then
+  if Release = '0.01' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
@@ -219,17 +221,43 @@ begin
     end;
   end;
 
-  if Info.DatabaseRelease = '0.02' then
+  if Release = '0.02' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
     //Info.Cnx.StartTransaction;
     try
-      FBCreateTableColumn('products','serprd','d_serial_nn','');
+      FBCreateDomain('d_codtva_nn','VARCHAR(3)','NOT NULL');
       FBCreateDomain('d_libelle_nn','varchar(100)','');
+      Info.Transaction.Commit;
+      FBCreateTableColumn('tva','codtva','d_codtva_nn','');
+      FBCreateTableColumn('tva','libtva','d_libelle_nn','');
+      FBAddConstraint('tva','pk_tva','primary key','(codtva)');
+      Info.Transaction.Commit;
+      SQLDirect('UPDATE OR INSERT INTO tva(codtva,libtva) VALUES (''S1'',''Taux normal'')');
+      SQLDirect('UPDATE OR INSERT INTO tva(codtva,libtva) VALUES (''S2'',''Taux super réduit'')');
+
+      FBCreateTableColumn('tautva','codtva','d_codtva_nn','');
+      FBCreateTableColumn('tautva','dateff','date','not null');
+      FBCreateTableColumn('tautva','rate','decimal(6,3)','not null');
+      FBAddConstraint('tautva','pk_tautva','primary key', '(codtva,dateff)');
+      FBAddConstraint('tautva','fk_tautva_codtva','foreign key','(codtva) references tva');
+      Info.Transaction.Commit;
+      SQLDirect('UPDATE OR INSERT INTO tautva(codtva,dateff,rate) VALUES (''S1'',''2022/01/01'',''17'')');
+      SQLDirect('UPDATE OR INSERT INTO tautva(codtva,dateff,rate) VALUES (''S2'',''2022/01/01'',''3'')');
+
+      FBCreateTableColumn('products','serprd','d_serial_nn','');
       FBCreateTableColumn('products','libprd','d_libelle_nn','');
       FBCreateDomain('d_boolean_nn','boolean', 'not null');
       FBCreateTableColumn('products','active', 'd_boolean_nn','default TRUE');
+      FBCreateTableColumn('products','codtva','d_codtva_nn','');
+      FBAddConstraint('products','pk_products', 'primary key', '(serprd)');
+      FBCreateDomain('d_code','varchar(16)','');
+      FBCreateTableColumn('products','codprd','d_code','');
+      FBCreateIndex('','i01_products_lib','products','libprd');
+      FBCreateIndex('','i02_products_code','products','codprd');
+      FBCreateIndex('','i03_products_codtva','products','codtva');
+      FBAddConstraint('products','fk_products_codtva','foreign key','(codtva) references tva');
       UpdateDatabaseRelease(Info.DatabaseRelease, Release);
       Info.Transaction.Commit;
       Log(Format('Release %s commited.',[Release]));
@@ -242,17 +270,12 @@ begin
     end;
   end;
 
-  if Info.DatabaseRelease = '0.03' then
+  if Release = '0.03' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
     //Info.Cnx.StartTransaction;
     try
-      FBAddConstraint('products','pk_products', 'primary key', '(serprd)');
-      FBCreateDomain('d_code','varchar(16)','');
-      FBCreateTableColumn('products','code','d_code','');
-      FBCreateIndex('','i01_products_lib','products','libprd');
-      FBCreateIndex('','i02_products_code','products','code');
       FBCreateTableColumn('prices','serprc','d_serial_nn','');
       FBCreateTableColumn('prices','serprd','d_serial_nn','');
       FBCreateDomain('d_date_nn','date','not null');
@@ -274,7 +297,7 @@ begin
     end;
   end;
 
-  if Info.DatabaseRelease = '0.04' then
+  if Release = '0.04' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
@@ -294,12 +317,13 @@ begin
     end;
   end;
 
-  if Info.DatabaseRelease = '0.05' then
+  if Release = '0.05' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
     try
-      SQLDirect('CREATE SEQUENCE seq_products');
+      if not FBSequenceExists('SEQ_PRODUCTS') then
+            SQLDirect('CREATE SEQUENCE seq_products');
       UpdateDatabaseRelease(Info.DatabaseRelease, Release);
       Info.Transaction.Commit;
     except
@@ -311,7 +335,7 @@ begin
     end;
   end;
 
-  if Info.DatabaseRelease = '0.06' then
+  if Release = '0.06' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
@@ -329,14 +353,14 @@ begin
     end;
   end;
 
-  if Info.DatabaseRelease = '0.07' then
+  if Release = '0.07' then
   begin
     IncRelease(Release);
     Log('Release='+Release);
     try
-      SQLDirect('DROP INDEX i02_products_code');
-      SQLDirect('ALTER TABLE products DROP code');
-      FBCreateIndex('','i02_products_codprd','products','codprd');
+      //SQLDirect('DROP INDEX i02_products_code');
+      //SQLDirect('ALTER TABLE products DROP code');
+      //FBCreateIndex('','i02_products_codprd','products','codprd');
       UpdateDatabaseRelease(Info.DatabaseRelease, Release);
       Info.Transaction.Commit;
     except
@@ -348,11 +372,104 @@ begin
     end;
   end;
 
+  if Release = '0.08' then
+  begin
+    IncRelease(Release);
+    Log('Release='+Release);
+    try
+      if not FBSequenceExists('SEQ_EVENTS') then
+            SQLDirect('CREATE SEQUENCE SEQ_EVENTS');
+      FBCreateTableColumn('event','serevt','integer','not null');
+      FBCreateTableColumn('event','begevt','d_date_nn','');
+      FBCreateTableColumn('event','endevt','d_date_nn','');
+      FBCreateTableColumn('event','libevt','d_libelle_nn','');
+      FBCreateTableColumn('event','active','d_boolean_nn','');
+      UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+      Info.Transaction.Commit;
+    except
+      on E:Exception do
+      begin
+        Info.Transaction.Rollback;
+        Log(E.Message);
+      end;
+    end;
+  end;
+
+  if Release = '0.09' then
+  begin
+    try
+      FBAddConstraint('event','pk_event','primary key','(serevt)');
+      if not FBSequenceExists('SEQ_CUSTOMERS') then
+            SQLDirect('CREATE SEQUENCE SEQ_CUSTOMERS');
+      FBCreateTableColumn('customers','sercust','integer','not null');
+      FBCreateTableColumn('customers','custname','d_libelle_nn','');
+      FBAddConstraint('customers','pk_customers','primary key','(sercust)');
+      IncRelease(Release);
+      Log('Release='+Release);
+      UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+      Info.Transaction.Commit;
+    except
+      on E:Exception do
+      begin
+        Info.Transaction.Rollback;
+        Log(E.Message);
+      end;
+    end;
+  end;
+
+  if Release = '0.1' then
+  begin
+    IncRelease(Release);
+    Log('Release='+Release);
+    try
+      UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+      Info.Transaction.Commit;
+    except
+      on E:Exception do
+      begin
+        Info.Transaction.Rollback;
+        Log(E.Message);
+      end;
+    end;
+  end;
+
+  if Release = '0.11' then
+  begin
+    IncRelease(Release);
+    Log('Release='+Release);
+    try
+      //FBCreateIndex('','i01_event','event','begevt DESC, endevt DESC');
+      //SQLDirect('CREATE DESCENDING INDEX i01_event ON event (begevt,endevt)');
+      FBCreateTableColumn('event_detail','serdet','d_serial_nn','');
+      FBCreateTableColumn('event_detail','serevt','d_serial_nn','');
+      FBCreateTableColumn('event_detail','numseq','smallint','not null');
+      FBCreateTableColumn('event_detail','serprd','d_serial_nn','');
+      FBCreateTableColumn('event_detail','libprd','d_libelle_nn','');
+      FBCreateTableColumn('event_detail','price','d_price_nn','');
+      FBAddConstraint('event_detail','pk_event_detail','primary key','(serdet)');
+      FBCreateIndex('','i01_event_detail_serevt','event_detail','serevt');
+      FBCreateIndex('','i02_event_detail_numseq','event_detail','numseq,serevt');
+      FBCreateIndex('','i03_event_detail_serprd','event_detail','serprd');
+      FBAddConstraint('event_detail','fk_event_detail_event','foreign key','(serevt) REFERENCES event');
+      FBAddConstraint('event_detail','fk_event_detail_product','foreign key','(serprd) REFERENCES products');
+      UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+      Info.Transaction.Commit;
+    except
+      on E:Exception do
+      begin
+        Info.Transaction.Rollback;
+        Log(E.Message);
+      end;
+    end;
+  end;
   //if Info.DatabaseRelease = 'x.xx' then
   //begin
   //  IncRelease(Release);
   //  Log('Release='+Release);
   //  try
+  //FBAddConstraint('prices','pk_prices','primary key','(serprc)');
+  //FBCreateIndex('unique','i01_prices','prices','serprd,dateff,qtymin');
+  //FBAddConstraint('prices','fk_prices_product','foreign key','(serprd) references products');
   //    UpdateDatabaseRelease(Info.DatabaseRelease, Release);
   //    Info.Transaction.Commit;
   //  except

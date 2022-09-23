@@ -1,7 +1,7 @@
 inherited ProductW: TProductW
-  Left = 379
+  Left = 454
   Height = 585
-  Top = 233
+  Top = 211
   Width = 746
   Caption = 'Products'
   ClientHeight = 585
@@ -230,8 +230,6 @@ inherited ProductW: TProductW
   end
   object SalesQuery: TSQLQuery[6]
     FieldDefs = <>
-    BeforePost = SalesQueryBeforePost
-    OnNewRecord = SalesQueryNewRecord
     Params = <>
     Macros = <>
     DataSource = DataSource
@@ -240,8 +238,6 @@ inherited ProductW: TProductW
   end
   object ProductionQuery: TSQLQuery[7]
     FieldDefs = <>
-    BeforePost = SalesQueryBeforePost
-    OnNewRecord = SalesQueryNewRecord
     Params = <>
     Macros = <>
     DataSource = DataSource

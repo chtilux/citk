@@ -12,7 +12,7 @@ function Login(Info: TInfo): boolean;
 implementation
 
 uses
-  Chtilux.Crypt{, ZConnection, ZClasses}, DB, Controls, citk.firebird, citk.persistence;
+  Chtilux.Crypt{, ZConnection, ZClasses}, DB, Controls, citk.firebird, citk.persistence, citk.User;
 
 procedure DoBeforeLogin(Info: TInfo);
 var
@@ -40,6 +40,7 @@ end;
 function Login(Info: TInfo): boolean;
 var
   dlg: TLoginW;
+  user: IUsers;
 begin
   Result := False;
   if Info.Cnx.Connected then
@@ -48,6 +49,7 @@ begin
   Info.Cnx.Password:=Decrypt(Info.Key, Info.DBAPwd);
   try
     Info.Cnx.Connected:=True;
+    { il faut afficher la fenêtre de connexion }
     if (Info.User.Login='') or (Info.User.Password='')  or (CompareText(Info.user.Password, Info.DefaultUserPassword)=0) then
     begin
       DoBeforeLogin(Info);
@@ -65,6 +67,28 @@ begin
       finally
         dlg.Free;
       end;
+    end
+    else
+    begin
+      try
+        if FBTableExists('USERS') then
+        begin
+          { contrôler le tupple login/password }
+          user := TUsers.Create(TFirebirdPersistence.Create(Info.Cnx, Info.Crypter));
+          Info.LoggedIn:=user.LoginPasswordIsValid(Info.User);
+        end
+        else
+        begin
+          Info.User.Login:='SYSDBA';
+          Info.LoggedIn := True;
+          Info.Log('Logged in as SYSDBA');
+        end;
+      except
+        Info.User.Login:='SYSDBA';
+        Info.LoggedIn := True;
+        Info.Log('Logged in as SYSDBA');
+      end;
+      Result := Info.LoggedIn;
     end;
   except
     on E:EDatabaseError do

@@ -60,6 +60,8 @@ type
     function GetPriceSQL(const AType: string): string;
     function GetInsertPriceSQL: string;
     function GetUpdatePriceSQL: string;
+    function GetDeletePriceSQL: string;
+    function GetDeleteProductPricesSQL: string;
   end;
 
   { TProducts }
@@ -71,6 +73,8 @@ type
     function GetPriceSQL(const AType: string): string;
     function GetInsertPriceSQL: string;
     function GetUpdatePriceSQL: string;
+    function GetDeletePriceSQL: string;
+    function GetDeleteProductPricesSQL: string;
   end;
 
 implementation
@@ -114,6 +118,16 @@ begin
            +'    ,qtymin = :qtymin'
            +'    ,price  = :price'
            +' WHERE serprc = :serprc';
+end;
+
+function TProducts.GetDeletePriceSQL: string;
+begin
+  Result := 'DELETE FROM prices WHERE serprc = :serprc';
+end;
+
+function TProducts.GetDeleteProductPricesSQL: string;
+begin
+  Result := 'DELETE FROM prices WHERE serprd = :serprd';
 end;
 
 { TPersistence }

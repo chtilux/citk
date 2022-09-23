@@ -1,7 +1,7 @@
 object MainW: TMainW
-  Left = 420
+  Left = 461
   Height = 480
-  Top = 241
+  Top = 207
   Width = 780
   Caption = 'Céline in the Kitchen'
   ClientHeight = 460
@@ -39565,6 +39565,9 @@ object MainW: TMainW
       object ProductsMenuItem: TMenuItem
         Action = ProductsAction
       end
+      object MenuItem1: TMenuItem
+        Action = EventsAction
+      end
       object Separator1: TMenuItem
         Caption = '-'
       end
@@ -39596,6 +39599,7 @@ object MainW: TMainW
       Category = 'Customers'
       Caption = 'Customers...'
       ImageIndex = 0
+      ShortCut = 16469
     end
     object ProductsAction: TAction
       Category = 'Products'
@@ -39614,6 +39618,12 @@ object MainW: TMainW
       Category = 'Application'
       Caption = 'Users...'
       ImageIndex = 2
+    end
+    object EventsAction: TAction
+      Category = 'Events'
+      Caption = 'Events'
+      ImageIndex = 5
+      ShortCut = 16453
     end
   end
   object SQLQuery1: TSQLQuery

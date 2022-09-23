@@ -54,15 +54,15 @@ type
     procedure InsertSalePriceActionExecute(Sender: TObject);
     procedure SalePriceActionsUpdate(AAction: TBasicAction; var Handled: Boolean
       );
-    procedure SalesQueryBeforePost(DataSet: TDataSet);
-    procedure SalesQueryNewRecord(DataSet: TDataSet);
+    //procedure SalesQueryBeforePost(DataSet: TDataSet);
+    //procedure SalesQueryNewRecord(DataSet: TDataSet);
     procedure UpdateProductionPriceActionExecute(Sender: TObject);
   private
     {$H-}
+    FSerPrd: integer;
     function CreatePriceWindow(const Pricetype: string): TForm;
     procedure DeletePrice(Dataset: TDataset);
-    function GetPrimaryKey(Dataset: TDataset; const Fieldname: string): integer; overload;
-    function GetPrimaryKey: integer; overload;
+    function GetPrimaryKey: integer;
     procedure UpdateOrInsertSaleP(Dataset: TDataset; const PType: string;
       const Mode: TUpdateOrInsertMode);
 
@@ -71,6 +71,9 @@ type
   public
     procedure QueryNewRecord(DataSet: TDataSet);
     procedure QueryBeforePost(DataSet: TDataSet);
+    procedure QueryAfterPost(DataSet: TDataSet);
+    procedure QueryBeforeDelete(Dataset: TDataset);
+    procedure QueryAfterDelete(Dataset: TDataset);
     procedure QueryPostError(DataSet: TDataSet; E: EDatabaseError;
       var DataAction: TDataAction);
   end;
@@ -114,6 +117,8 @@ begin
 
   ProductionQuery.SQL.Add(prd.GetPriceSQL('P'));
   ProductionQuery.Open;
+
+  FSerPrd := -1;
 end;
 
 procedure TProductW.FormShow(Sender: TObject);
@@ -131,6 +136,7 @@ begin
     FieldName:='serprd';
     Width := 150;
     Visible:=False;
+    ReadOnly := True;
     Title.Caption:='Product''s ID';
   end;
   with SalesGrid.Columns.Add do
@@ -226,6 +232,7 @@ procedure TProductW.UpdateOrInsertSaleP(Dataset: TDataset; const PType: string; 
 var
   F: TForm;
   prd: TProducts;
+  log: string;
 begin
   F := CreatePriceWindow(PType);
   try
@@ -249,27 +256,53 @@ begin
           case Mode of
             uiUpdate : begin
               SQL.Add(prd.GetUpdatePriceSQL);
-              ParamByname('serprc').Value := Dataset.FieldByName('serprc').Value;
+              ParamByName('serprc').Value := Dataset.FieldByName('serprc').Value;
+              log := Format('Update of Price serprc=%d, serprd=%d, dateff=%s, qtymin=%f, price=%f, type=%s', [Dataset.FieldByname('serprc').AsInteger,
+                                                                                                              Dataset.FieldByname('serprd').AsInteger,
+                                                                                                              Dataset.FieldByname('dateff').AsString,
+                                                                                                              Dataset.FieldByname('qtymin').AsFloat,
+                                                                                                              Dataset.FieldByname('price').AsFloat,
+                                                                                                              Dataset.FieldByname('ptype').AsString]);
             end;
             uiInsert : begin
               SQL.Add(prd.GetInsertPriceSQL);
-              ParamByname('serprc').AsInteger := GetPrimaryKey;
-              ParamByname('serprd').AsInteger := Query.FieldByName('serprd').AsInteger;
+              ParamByName('serprc').AsInteger := GetPrimaryKey;
+              ParamByName('serprd').AsInteger := Query.FieldByName('serprd').AsInteger;
               ParamByName('ptype').AsString := PType;
             end;
           end;
-          ParamByname('dateff').AsDate := TDateTimePicker(F.FindComponent('dateff')).Date;
+          ParamByName('dateff').AsDate := TDateTimePicker(F.FindComponent('dateff')).Date;
           ParamByName('qtymin').AsFloat := TFloatSpinEditEx(F.FindComponent('qtymin')).Value;
           ParamByName('price').AsFloat := TFloatSpinEditEx(F.FindComponent('price')).Value;
           try
             ExecSQL;
             Self.DataObject.Transaction.CommitRetaining;
+            case Mode of
+              uiInsert : log := Format('Price serprc=%d, serprd=%d, dateff=%s, qtymin=%f, price=%f, type=%s inserted', [ParamByName('serprc').AsInteger,
+                                                                                                                        ParamByName('serprd').AsInteger,
+                                                                                                                        ParamByName('dateff').AsString,
+                                                                                                                        ParamByName('qtymin').AsFloat,
+                                                                                                                        ParamByName('price').AsFloat,
+                                                                                                                        ParamByName('ptype').AsString]);
+              uiUpdate : begin
+                Info.Log(log);
+                log := Format('NEW Value serprc=%d, dateff=%s, qtymin=%f, price=%f', [ParamByName('serprc').AsInteger,
+                                                                                      ParamByName('dateff').AsString,
+                                                                                      ParamByName('qtymin').AsFloat,
+                                                                                      ParamByName('price').AsFloat]);
+              end;
+            end;
+            Info.Log(log);
             Dataset.Refresh;
           except
             on E:EDatabaseError do
             begin
               if Pos('I01_PRICES', E.Message) > 0 then
-                MessageDlg('A price already exists for this validity date', mtError, [mbOk], 0)
+              begin
+                log := Format('A price already exists for validity date %s',[ParamByName('dateff').AsString]);
+                MessageDlg(log, mtError, [mbOk], 0);
+                Info.Log(Format('ERROR : %s',[log]));
+              end
               else
                 raise;
             end;
@@ -392,6 +425,7 @@ end;
 procedure TProductW.DeletePrice(Dataset: TDataset);
 var
   prd: IProducts;
+  log: string;
 begin
   if MessageDlg('Confirm price delete ?', mtConfirmation, [mbYes, mbNo], 0, mbNo) = mrYes then
   begin
@@ -403,8 +437,15 @@ begin
         prd := TProducts.Create;
         SQL.Add(prd.GetDeletePriceSQL);
         Params[0].AsInteger:=Dataset.FieldByname('serprc').AsInteger;
+        log := Format('Price serprc=%d, serprd=%d, dateff=%s, qtymin=%f, price=%f, type=%s deleted', [Dataset.FieldByname('serprc').AsInteger,
+                                                                                                      Dataset.FieldByname('serprd').AsInteger,
+                                                                                                      Dataset.FieldByname('dateff').AsString,
+                                                                                                      Dataset.FieldByname('qtymin').AsFloat,
+                                                                                                      Dataset.FieldByname('price').AsFloat,
+                                                                                                      Dataset.FieldByname('ptype').AsString]);
         ExecSQL;
         Self.DataObject.Transaction.CommitRetaining;
+        Self.Info.Log(log);
         Dataset.Refresh;
       finally
         Free;
@@ -413,66 +454,32 @@ begin
   end;
 end;
 
-procedure TProductW.SalesQueryBeforePost(DataSet: TDataSet);
-begin
-  { primary key }
-  Dataset.FieldByName('serprc').AsInteger:=GetPrimaryKey(Dataset, 'serprc');
-end;
-
-function TProductW.GetPrimaryKey(Dataset: TDataset; const Fieldname: string): integer;
-var
-  prd: IProducts;
-begin
-  Result := -1;
-  { primary key }
-  if dataset.FieldByName(Fieldname).IsNull then
-  begin
-    with TSQLQuery.Create(nil) do
-    begin
-      try
-        SQLConnection:=Self.DataObject.Connector;
-        Transaction:=Self.DataObject.Transaction;
-        prd := TProducts.Create;
-        SQL.Add(prd.GetPKSQL);
-        Open;
-        Result:=Fields[0].AsInteger;
-        Close;
-      finally
-        Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TProductW.SalesQueryNewRecord(DataSet: TDataSet);
-begin
-  Dataset.FieldByName('serprd').AsInteger:=Query.FieldByName('serprd').AsInteger;
-  Dataset.FieldByName('dateff').AsDateTime:= Validity.Date;
-  Dataset.FieldByName('qtymin').AsFloat:=1;
-  if Dataset = SalesQuery then
-     Dataset.FieldByName('ptype').AsString:='S';
-  if Dataset = ProductionQuery then
-     Dataset.FieldByName('ptype').AsString:='P';
-end;
-
 procedure TProductW.QueryPostError(DataSet: TDataSet; E: EDatabaseError;
   var DataAction: TDataAction);
+var
+  log: string;
 begin
+  log := E.Message;
   if Pos('is required, but not supplied',E.Message) > 0 then
   begin
     if Pos('CODPRD',E.Message) > 0 then
-      MessageDlg('Code product must have a value (or Cancel the record).', mtError, [mbOk], 0);
+      log := 'Code product must have a value (or Cancel the record).';
 
     if Pos('LIBPRD',E.Message) > 0 then
-      MessageDlg('Description product must have a value (or Cancel the record).', mtError, [mbOk], 0);
+      log := 'Description product must have a value (or Cancel the record).';
 
     if Pos('ACTIVE',E.Message) > 0 then
-      MessageDlg('Product must be active or inactive. Check or uncheck the box (or Cancel the record).', mtError, [mbOk], 0);
+      log := 'Product must be active or inactive. Check or uncheck the box (or Cancel the record).';
 
+    MessageDlg(log, mtError, [mbOk], 0);
     DataAction := daAbort;
+    Info.Log(log);
   end
   else
+  begin
     DataAction := daFail;
+    Info.Log(log);
+  end;
 end;
 
 procedure TProductW.saveContent;
@@ -481,16 +488,6 @@ begin
     if DataObject.Transaction.Active then
     begin
       Query.ApplyUpdates;
-      SalesQuery.DataSource:=nil;
-      SalesQuery.First;
-      while not SalesQuery.EOF do
-      begin;
-        if SalesQuery.UpdateStatus <> usUnmodified then
-            SalesQuery.ApplyUpdates;
-        SalesQuery.Next;
-      end;
-
-      ProductionQuery.ApplyUpdates;
       DataObject.Transaction.Commit;
     end;
   except
@@ -505,12 +502,57 @@ end;
 procedure TProductW.QueryNewRecord(DataSet: TDataSet);
 begin
   Dataset.FieldByName('active').AsBoolean:=True;
+  Info.Log('Inserting new product');
 end;
 
 procedure TProductW.QueryBeforePost(DataSet: TDataSet);
 begin
   { primary key }
-  Dataset.FieldByName('serprd').AsInteger:=GetPrimaryKey(Dataset, 'serprd');
+  if (Dataset.State = dsInsert) and (Dataset.FieldByName('serprd').IsNull) then
+    Dataset.FieldByName('serprd').AsInteger:=GetPrimaryKey;
+end;
+
+procedure TProductW.QueryAfterPost(DataSet: TDataSet);
+var
+  log: string;
+begin
+  log := Format('POST : serprd=%d, codprd=%s, libprd=%s, active=%s', [Dataset.FieldByName('serprd').AsInteger,
+                                                                      Dataset.FieldByName('codprd').AsString,
+                                                                      Dataset.FieldByName('libprd').AsString,
+                                                                      BoolToStr(Dataset.FieldByName('active').AsBoolean,True)]);
+  Info.Log(log);
+  Query.ApplyUpdates;
+  DataObject.Transaction.CommitRetaining;
+end;
+
+procedure TProductW.QueryBeforeDelete(Dataset: TDataset);
+begin
+  FSerPrd:=Dataset.FieldByName('serprd').AsInteger;
+end;
+
+procedure TProductW.QueryAfterDelete(Dataset: TDataset);
+var
+  prd: IProducts;
+begin
+  if FSerprd > -1 then
+  begin
+    prd := TProducts.Create;
+    with TSQLQuery.Create(nil) do
+    begin
+      try
+        SQLConnection:=DataObject.Connector;
+        Transaction:=DataObject.Transaction;
+        SQL.Add(prd.GetDeleteProductPricesSQL);
+        ParamByName('serprd').AsInteger:=FSerprd;
+        ExecSQL;
+        DataObject.Transaction.CommitRetaining;
+        Info.Log(Format('Product %d and prices are deleted.',[FSerPrd]));
+        FSerprd:=-1;
+      finally
+        Free;
+      end;
+    end;
+  end;
 end;
 
 { TProductsColumns }
@@ -522,7 +564,8 @@ begin
   begin
     FieldName:='serprd';
     Width := 150;
-    Visible:=False;
+    Visible:=True;
+    ReadOnly := True;
     Title.Caption:='ID';
   end;
   with ADBGrid.Columns.Add do
@@ -562,7 +605,10 @@ begin
     Q.SQL.Add(prd.GetSQL);
     Q.OnNewRecord:=@F.QueryNewRecord;
     Q.BeforePost:=@F.QueryBeforePost;
+    Q.AfterPost:=@F.QueryAfterPost;
     Q.AfterInsert:=@F.QueryBeforePost;
+    Q.BeforeDelete:=@F.QueryBeforeDelete;
+    Q.AfterDelete:=@F.QueryAfterDelete;
     Q.OnPostError:=@F.QueryPostError;
     F.Query:=Q;
     Q.Open;

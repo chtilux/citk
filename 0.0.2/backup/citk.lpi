@@ -18,7 +18,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="2"/>
+      <BuildNr Value="4"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -32,6 +32,12 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="Chtilux"/>
+      </Item>
+      <Item>
+        <PackageName Value="dcpcrypt"/>
+      </Item>
+      <Item>
         <PackageName Value="DateTimeCtrls"/>
       </Item>
       <Item>
@@ -42,15 +48,6 @@
       </Item>
       <Item>
         <PackageName Value="LazControls"/>
-      </Item>
-      <Item>
-        <PackageName Value="zcomponent"/>
-      </Item>
-      <Item>
-        <PackageName Value="dcpcrypt"/>
-      </Item>
-      <Item>
-        <PackageName Value="Chtilux"/>
       </Item>
       <Item>
         <PackageName Value="LCL"/>
@@ -135,6 +132,55 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="citk.ProductWindow"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.customerswindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CustomersW"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.customersWindow"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.customers.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.eventswindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EventsW"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.EventsWindow"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.events.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.Events"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.eventdetail.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.EventDetail"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.eventdetailwindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EventDetailW"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.eventdetailWindow"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.billing.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.Billing"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.billingwindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="BillingW"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.BillingWindow"/>
       </Unit>
     </Units>
   </ProjectOptions>

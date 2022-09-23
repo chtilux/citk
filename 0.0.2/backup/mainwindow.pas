@@ -6,13 +6,14 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  ExtCtrls,  Buttons, Menus, ActnList, RTTICtrls, citk.global,
-  citk.DataModule;
+  ExtCtrls,  Buttons, Menus, ActnList, RTTICtrls, citk.global;
 
 type
   { TMainW }
 
   TMainW = class(TForm)
+    EventsAction: TAction;
+    MenuItem1: TMenuItem;
     SQLQuery1: TSQLQuery;
     UsersAction: TAction;
     Separator2: TMenuItem;
@@ -32,6 +33,7 @@ type
     QuitMenuItem: TMenuItem;
     SB: TStatusBar;
     procedure ApplicationDictionaryActionExecute(Sender: TObject);
+    procedure CustomersActionExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -41,6 +43,8 @@ type
     FInfo: TInfo;
     procedure DisplayDictionary;
     procedure DisplayProducts;
+    procedure DisplayCustomers;
+    procedure DisplayEvents;
     procedure SetInfo(AValue: TInfo);
   public
     property Info: TInfo read FInfo write SetInfo;
@@ -54,7 +58,8 @@ implementation
 {$R *.lfm}
 
 uses
-  citk.utils, citk.dictionary, citk.ProductWindow;
+  citk.utils, citk.dictionary, citk.ProductWindow, citk.customersWindow,
+  citk.EventsWindow;
 
 { TMainW }
 
@@ -76,6 +81,7 @@ end;
 procedure TMainW.FormDestroy(Sender: TObject);
 begin
   WriteCurrentSizeAndPosition(Sender as TForm);
+  Info.Log('Application terminated');
 end;
 
 procedure TMainW.FormResize(Sender: TObject);
@@ -98,6 +104,11 @@ begin
   DisplayDictionary;
 end;
 
+procedure TMainW.CustomersActionExecute(Sender: TObject);
+begin
+  DisplayCustomers;
+end;
+
 procedure TMainW.DisplayDictionary;
 begin
   glGlobalInfo.Log('DisplayDictionary');
@@ -108,6 +119,18 @@ procedure TMainW.DisplayProducts;
 begin
   glGlobalInfo.Log('DisplayProducts');
   citk.ProductWindow.DisplayProducts;
+end;
+
+procedure TMainW.DisplayCustomers;
+begin
+  glGlobalInfo.Log('DisplayCustomers');
+  citk.CustomersWindow.DisplayCustomers;
+end;
+
+procedure TMainW.DisplayEvents;
+begin
+  glGlobalInfo.Log('DisplayEvents');
+  citk.EventsWindow.DisplayEvents;
 end;
 
 end.

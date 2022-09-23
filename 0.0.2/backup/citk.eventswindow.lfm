@@ -1,0 +1,115 @@
+inherited EventsW: TEventsW
+  Left = 517
+  Height = 517
+  Top = 281
+  Width = 860
+  Caption = 'Events'
+  ClientHeight = 517
+  ClientWidth = 860
+  inherited TopPanel: TPanel
+    Width = 860
+  end
+  inherited BottomPanel: TPanel
+    Top = 467
+    Width = 860
+    ClientWidth = 860
+    object BitBtn1: TBitBtn[0]
+      Left = 17
+      Height = 30
+      Top = 11
+      Width = 75
+      Action = BillingAction
+      TabOrder = 0
+    end
+    object BitBtn2: TBitBtn[1]
+      Left = 633
+      Height = 30
+      Top = 10
+      Width = 111
+      Action = EditSelectionAction
+      Anchors = [akTop, akRight]
+      TabOrder = 1
+    end
+  end
+  inherited WorkingSpacePanel: TPanel
+    Height = 417
+    Width = 860
+    ClientHeight = 417
+    ClientWidth = 860
+    inherited DataStatusBar: TStatusBar
+      Top = 390
+      Width = 852
+    end
+    inherited DataNavPanel: TPanel
+      Width = 852
+      ClientWidth = 852
+      inherited DataNav: TDBNavigator
+        Left = 609
+        Hints.Strings = (        )
+        OnClick = DataNavClick
+      end
+    end
+    inherited DataGrid: TDBGrid
+      Height = 357
+      Width = 627
+      OnKeyPress = DataGridKeyPress
+    end
+    object DetailPanel: TPanel[3]
+      Left = 631
+      Height = 357
+      Top = 33
+      Width = 225
+      Align = alRight
+      BorderWidth = 2
+      ClientHeight = 357
+      ClientWidth = 225
+      TabOrder = 3
+      object DetailView: TListView
+        Left = 3
+        Height = 351
+        Top = 3
+        Width = 219
+        Align = alClient
+        Columns = <        
+          item
+            Caption = 'Description'
+            Width = 140
+          end        
+          item
+            Alignment = taRightJustify
+            Caption = 'Price'
+            Width = 60
+          end>
+        PopupMenu = PopupMenu1
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnDblClick = EditSelectionActionExecute
+      end
+    end
+  end
+  inherited DataSource: TDataSource
+    OnDataChange = DataSourceDataChange
+    Left = 408
+    Top = 104
+  end
+  object ActionList1: TActionList[4]
+    OnUpdate = ActionList1Update
+    Left = 459
+    Top = 193
+    object EditSelectionAction: TAction
+      Caption = 'Edit Selection...'
+      OnExecute = EditSelectionActionExecute
+    end
+    object BillingAction: TAction
+      Caption = 'Billing...'
+      OnExecute = BillingActionExecute
+    end
+  end
+  object PopupMenu1: TPopupMenu[5]
+    Left = 714
+    Top = 211
+    object MenuItem1: TMenuItem
+      Action = EditSelectionAction
+    end
+  end
+end

@@ -70,9 +70,31 @@ begin
     end
     else
     begin
-      { contrôler le tupple login/password }
-      user := TUsers.Create(TFirebirdPersistence.Create(Info.Cnx, Info.Crypter));
-      Info.LoggedIn:=user.LoginPasswordIsValid(Info.User);
+      try
+        if FBTableExists('USERS') then
+        begin
+          { contrôler le tupple login/password }
+          user := TUsers.Create(TFirebirdPersistence.Create(Info.Cnx, Info.Crypter));
+          Info.LoggedIn:=user.LoginPasswordIsValid(Info.User);
+        end
+        else
+        begin
+          Info.User.Login:='SYSDBA';
+          Info.LoggedIn := True;
+          Info.Log('Logged in as SYSDBA');
+        end;
+      except
+        on E:EAssertionFailed do
+        begin
+          Info.Log(E.Message);
+          Info.User.Login:='SYSDBA';
+          Info.LoggedIn := True;
+          Info.Log('Logged in as SYSDBA');
+        end
+        else
+          raise;
+      end;
+      Result := Info.LoggedIn;
     end;
   except
     on E:EDatabaseError do

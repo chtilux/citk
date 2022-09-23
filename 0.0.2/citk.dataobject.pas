@@ -16,6 +16,7 @@ type
     function GetTransaction: TSQLTransaction;
     procedure SetTransaction(AValue: TSQLTransaction);
     property Transaction: TSQLTransaction read GetTransaction write SetTransaction;
+    function GetQuery: TSQLQuery;
   end;
 
   { TFirebirdDataObject }
@@ -32,6 +33,7 @@ type
     constructor Create(AConnector: TSQLConnector; ATransaction: TSQLTransaction); virtual;
     property Connector: TSQLConnector read GetConnector write SetConnector;
     property Transaction: TSQLTransaction read GetTransaction write SetTransaction;
+    function GetQuery: TSQLQuery;
   end;
 
 implementation
@@ -64,6 +66,13 @@ constructor TFirebirdDataObject.Create(AConnector: TSQLConnector;
 begin
   FConnector:=AConnector;
   FTransaction:=ATransaction;
+end;
+
+function TFirebirdDataObject.GetQuery: TSQLQuery;
+begin
+  Result := TSQLQuery.Create(nil);
+  Result.SQLConnection:=Connector;
+  Result.Transaction:=Transaction;
 end;
 
 end.

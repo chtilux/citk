@@ -1,0 +1,50 @@
+object BillingW: TBillingW
+  Left = 332
+  Height = 564
+  Top = 145
+  Width = 897
+  Caption = 'Billing event'
+  ClientHeight = 564
+  ClientWidth = 897
+  Color = 8388672
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 8
+    Height = 544
+    Top = 8
+    Width = 880
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderWidth = 3
+    ClientHeight = 544
+    ClientWidth = 880
+    Color = clSilver
+    ParentColor = False
+    TabOrder = 0
+    object Panel2: TPanel
+      Left = 4
+      Height = 50
+      Top = 4
+      Width = 872
+      Align = alTop
+      ClientHeight = 50
+      ClientWidth = 872
+      TabOrder = 0
+      object Label1: TLabel
+        Left = 18
+        Height = 15
+        Top = 18
+        Width = 58
+        Caption = 'Customer :'
+        ParentColor = False
+      end
+      object SercustEdit: TEdit
+        Left = 80
+        Height = 23
+        Top = 14
+        Width = 168
+        TabOrder = 0
+        TextHint = 'Let empty for cash customer'
+      end
+    end
+  end
+end

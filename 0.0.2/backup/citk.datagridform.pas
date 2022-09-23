@@ -89,46 +89,6 @@ procedure TDataGridForm.FormShow(Sender: TObject);
 begin
   if Assigned(FOnSetDataGridColumns) then
     FOnSetDataGridColumns(DataGrid);
-  with SalesGrid.Columns.Add do
-  begin
-    FieldName:='serprc';
-    Width := 150;
-    //Visible:=False;
-    Title.Caption:='ID';
-  end;
-  with SalesGrid.Columns.Add do
-  begin
-    FieldName:='serprd';
-    Width := 150;
-    //Visible:=False;
-    Title.Caption:='Product''s ID';
-  end;
-  with SalesGrid.Columns.Add do
-  begin
-    FieldName:='ptype';
-    Width := 150;
-    Visible:=False;
-    Title.Caption:='Type';
-  end;
-  with SalesGrid.Columns.Add do
-  begin
-    FieldName:='dateff';
-    Width := 150;
-    Title.Caption:='Validity';
-  end;
-  with SalesGrid.Columns.Add do
-  begin
-    FieldName:='qtymin';
-    Width := 150;
-    Visible:=False;
-    Title.Caption:='Min. Quantity';
-  end;
-  with SalesGrid.Columns.Add do
-  begin
-    FieldName:='price';
-    Width := 150;
-    Title.Caption:='Sale price TTC';
-  end;
 end;
 
 procedure TDataGridForm.SaveContent;

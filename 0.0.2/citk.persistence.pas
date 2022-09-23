@@ -61,6 +61,7 @@ type
     function GetInsertPriceSQL: string;
     function GetUpdatePriceSQL: string;
     function GetDeletePriceSQL: string;
+    function GetDeleteProductPricesSQL: string;
   end;
 
   { TProducts }
@@ -73,12 +74,10 @@ type
     function GetInsertPriceSQL: string;
     function GetUpdatePriceSQL: string;
     function GetDeletePriceSQL: string;
+    function GetDeleteProductPricesSQL: string;
   end;
 
 implementation
-
-uses
-  ZDataset, Chtilux.Crypt;
 
 { TProducts }
 
@@ -121,6 +120,11 @@ end;
 function TProducts.GetDeletePriceSQL: string;
 begin
   Result := 'DELETE FROM prices WHERE serprc = :serprc';
+end;
+
+function TProducts.GetDeleteProductPricesSQL: string;
+begin
+  Result := 'DELETE FROM prices WHERE serprd = :serprd';
 end;
 
 { TPersistence }

@@ -29,6 +29,7 @@ type
     procedure SetConnector(AValue: TSQLConnector);
     procedure SetTransaction(AValue: TSQLTransaction);
   public
+    constructor Create(AConnector: TSQLConnector; ATransaction: TSQLTransaction); virtual;
     property Connector: TSQLConnector read GetConnector write SetConnector;
     property Transaction: TSQLTransaction read GetTransaction write SetTransaction;
   end;
@@ -56,6 +57,13 @@ procedure TFirebirdDataObject.SetTransaction(AValue: TSQLTransaction);
 begin
   if FTransaction=AValue then Exit;
   FTransaction:=AValue;
+end;
+
+constructor TFirebirdDataObject.Create(AConnector: TSQLConnector;
+  ATransaction: TSQLTransaction);
+begin
+  FConnector:=AConnector;
+  FTransaction:=ATransaction;
 end;
 
 end.

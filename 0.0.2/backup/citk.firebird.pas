@@ -26,16 +26,13 @@ function FBTableColumnExists(const TableName, Column: string): boolean;
 function FBDomainExists(const Domain: string): boolean;
 function FBConstraintExists(const Name: string; out relation_name: string): boolean;
 function FBTableIndexExists(const Name, TableName: string): boolean;
+function FBSequenceExists(const Name: string): boolean;
 
 implementation
-
-uses
-  Contnrs, ZDataset;
 
 var
   Cnx: TSQLConnector;
   Trx: TSQLTransaction;
-  Objects: TFPObjectList;
   TableExists,
   TableColumnExists,
   DomainExists,
@@ -47,31 +44,6 @@ procedure SetConnection(Connection: TSQLConnector; Transaction: TSQLTransaction)
 begin
   Cnx := Connection;
   Trx := Transaction;
-
-  //TableExists.SQLConnection := Cnx;
-  //TableExists.Transaction:=Trx;
-  //if TableExists.Prepared then
-  //  TableExists.Unprepare;
-
-  //TableColumnExists.SQLConnection := Cnx;
-  //TableColumnExists.Transaction:=Trx;
-  //if TableColumnExists.Prepared then
-  //  TableColumnExists.Unprepare;
-
-  DomainExists.SQLConnection := Cnx;
-  DomainExists.Transaction:=Trx;
-  if DomainExists.Prepared then
-    DomainExists.Unprepare;
-
-  ConstraintExists.SQLConnection := Cnx;
-  ConstraintExists.Transaction:=Trx;
-  if ConstraintExists.Prepared then
-    ConstraintExists.Unprepare;
-
-  TableIndexExists.SQLConnection := Cnx;
-  TableIndexExists.Transaction:=Trx;
-  if TableIndexExists.Prepared then
-    TableIndexExists.Unprepare;
 end;
 
 procedure SetLogger(ALogger: ILogger);
@@ -91,25 +63,19 @@ begin
   Assert(Assigned(Trx), 'Trx is nil');
 end;
 
-function GetCursor: TSQLQuery;
-begin
-  Result := TSQLQuery.Create(nil);
-  Result.SQLConnection := Cnx;
-  Result.Transaction:=Trx;
-  Objects.Add(Result);
-end;
-
 procedure SQLDirect(const sql: string);
 var
   z: TSQLQuery;
 begin
-  z := GetCursor;
+  z := TSQLQuery.Create(nil);
   try
+    z.SQLConnection:=Cnx;
+    z.Transaction:=Trx;
     z.SQL.Add(sql);
     z.ExecSQL;
     Log(sql);
   finally
-    Objects.Remove(z);
+    z.Free;
   end;
 end;
 
@@ -119,8 +85,10 @@ var
   i: integer;
 begin
   Result := TStringList.Create;
-  z := GetCursor;
+  z := TSQLQuery.Create(nil);
   try
+    z.SQLConnection:=Cnx;
+    z.Transaction:=Trx;
     z.SQL.Add(sql);
     z.Open;
     if not z.Eof then
@@ -130,7 +98,7 @@ begin
     end;
     z.Close;
   finally
-    Objects.Remove(z);
+    z.Free;
   end;
 end;
 
@@ -139,8 +107,10 @@ var
   z: TSQLQuery;
 begin
   CheckFBConnection;
-  z := GetCursor;
+  z := TSQLQuery.Create(nil);
   try
+    z.SQLConnection:=Cnx;
+    z.Transaction:=Trx;
     if not FBDomainExists(Domain) then
     begin
       z.SQL.Add(Format('CREATE DOMAIN %s %s %s',[Domain, DataType, Decorate]));
@@ -148,7 +118,7 @@ begin
       Log(Format('Domain %s created.',[Domain]));
     end;
   finally
-    Objects.Remove(z);
+    z.Free;
   end;
 end;
 
@@ -158,8 +128,10 @@ var
   sql: string;
 begin
   CheckFBConnection;
-  z := GetCursor;
+  z := TSQLQuery.Create(nil);
   try
+    z.SQLConnection:=Cnx;
+    z.Transaction:=Trx;
     sql := '';
     if FBTableExists(TableName) then
     begin
@@ -177,7 +149,7 @@ begin
     end;
 
   finally
-    Objects.Remove(z);
+    z.Free;
   end;
 end;
 
@@ -234,7 +206,6 @@ end;
 procedure FBCreateIndex(const PreDecorate, IndexName, TableName, Columns: string);
 begin
   CheckFBConnection;
-  { #todo : Check index exists }
   if not FBTableIndexExists(IndexName, TableName) then
     SQLDirect(Format('CREATE %s INDEX %s ON %s (%s)',[PreDecorate, IndexName, TableName, Columns]));
 end;
@@ -250,14 +221,21 @@ end;
 function FBDomainExists(const Domain: string): boolean;
 begin
   CheckFBConnection;
-  if not DomainExists.Prepared then
-    DomainExists.Prepare;
-  DomainExists.Params[0].AsString:=Domain.ToUpper;
-  DomainExists.Open;
+  DomainExists := TSQLQuery.Create(nil);
   try
+    DomainExists.SQLConnection:=Cnx;
+    DomainExists.Transaction:=Trx;
+    DomainExists.SQL.Add('SELECT 1 FROM rdb$fields'
+                        +' WHERE UPPER(rdb$field_name) = :domain'
+                        +'   AND rdb$system_flag = 0');
+    if not DomainExists.Prepared then
+      DomainExists.Prepare;
+    DomainExists.Params[0].AsString:=Domain.ToUpper;
+    DomainExists.Open;
     Result := DomainExists.Fields[0].AsString = '1';
-  finally
     DomainExists.Close;
+  finally
+    FreeAndNil(DomainExists);
   end;
 end;
 
@@ -265,62 +243,69 @@ function FBConstraintExists(const Name: string; out relation_name: string): bool
 begin
   relation_name:='';
   CheckFBConnection;
-  if not ConstraintExists.Prepared then
-    ConstraintExists.Prepare;
-  ConstraintExists.Params[0].AsString:=Name.ToUpper;
-  ConstraintExists.Open;
+  ConstraintExists := TSQLQuery.Create(nil);
   try
+    ConstraintExists.SQLConnection:=Cnx;
+    ConstraintExists.Transaction:=Trx;
+    ConstraintExists.SQL.Add('SELECT UPPER(rdb$relation_name)'
+                            +' FROM rdb$indices'
+                            +' WHERE UPPER(rdb$index_name) = :Name'
+                            +'   AND rdb$system_flag = 0'
+                            +'   AND rdb$index_type IS NULL');
+    if not ConstraintExists.Prepared then
+      ConstraintExists.Prepare;
+    ConstraintExists.Params[0].AsString:=Name.ToUpper;
+    ConstraintExists.Open;
     Result := not ConstraintExists.EOF;
     if not Result then
       relation_name:=ConstraintExists.Fields[0].AsString;
   finally
-    ConstraintExists.Close;
+    FreeAndNil(ConstraintExists);
   end;
 end;
 
 function FBTableIndexExists(const Name, TableName: string): boolean;
 begin
-  TableIndexExists.ParamByName('IndexName').AsString:=Name.ToUpper;
-  TableIndexExists.ParamByName('TableName').AsString:=TableName.ToUpper;
-  TableIndexExists.Open;
+  TableIndexExists := TSQLQuery.Create(nil);
   try
+    TableIndexExists.SQLConnection:=Cnx;
+    TableIndexExists.Transaction:=Trx;
+    TableIndexExists.SQL.Add('SELECT 1 FROM rdb$indices'
+                            +' WHERE UPPER(rdb$relation_name) = :TableName'
+                            +'   AND UPPER(rdb$index_name) = :IndexName'
+                            +'   AND rdb$system_flag = 0'
+                            +'   AND rdb$index_type = 0');
+    TableIndexExists.ParamByName('IndexName').AsString:=Name.ToUpper;
+    TableIndexExists.ParamByName('TableName').AsString:=TableName.ToUpper;
+    TableIndexExists.Open;
     Result := TableIndexExists.Fields[0].AsString = '1';
   finally
-    TableIndexExists.Close;
+    FreeAndNil(TableIndexExists);
+  end;
+end;
+
+function FBSequenceExists(const Name: string): boolean;
+begin
+  with TSQLQuery.Create(nil) do
+  begin
+    try
+      SQLConnection:=Cnx;
+      Transaction:=Trx;
+      SQL.Add('SELECT COUNT(*) FROM rdb$generators'
+             +' WHERE UPPER(rdb$generator_name)= '+Name.ToUpper.QuotedString);
+      Log(SQL.Text);
+      Open;
+      Result:=Fields[0].AsInteger=1;
+      Close;
+    finally
+      Free;
+    end;
   end;
 end;
 
 initialization
   Cnx := nil;
   Trx := nil;
-
-  Objects := TFPObjectList.Create(True);
-
-  //TableColumnExists := GetCursor;
-  //TableColumnExists.SQL.Add('SELECT 1 from rdb$relation_fields'
-  //                         +' WHERE UPPER(rdb$relation_name) = :TableName'
-  //                         +'   AND UPPER(rdb$field_name) = :Column');
-
-  DomainExists := GetCursor;
-  DomainExists.SQL.Add('SELECT 1 FROM rdb$fields'
-                      +' WHERE UPPER(rdb$field_name) = :domain'
-                      +'   AND rdb$system_flag = 0');
-
-  ConstraintExists := getCursor;
-  ConstraintExists.SQL.Add('SELECT UPPER(rdb$relation_name)'
-                          +' FROM rdb$indices'
-                          +' WHERE UPPER(rdb$index_name) = :Name'
-                          +'   AND rdb$system_flag = 0'
-                          +'   AND rdb$index_type IS NULL');
-
-  TableIndexExists := getCursor;
-  TableIndexExists.SQL.Add('SELECT 1 FROM rdb$indices'
-                          +' WHERE UPPER(rdb$relation_name) = :TableName'
-                          +'   AND UPPER(rdb$index_name) = :IndexName'
-                          +'   AND rdb$system_flag = 0'
-                          +'   AND rdb$index_type = 0');
-finalization
-  Objects.Free;
 
 end.
 
