@@ -65,9 +65,6 @@ type
     function GetPrimaryKey: integer;
     procedure UpdateOrInsertSaleP(Dataset: TDataset; const PType: string;
       const Mode: TUpdateOrInsertMode);
-
-  protected
-    procedure saveContent; override;
   public
     procedure QueryNewRecord(DataSet: TDataSet);
     procedure QueryBeforePost(DataSet: TDataSet);
@@ -85,7 +82,7 @@ implementation
 {$R *.lfm}
 
 uses
-  citk.persistence, DateUtils;
+  DateUtils, citk.products, citk.dictionary;
 
 type
 
@@ -408,8 +405,7 @@ end;
 
 procedure TProductW.DataGridKeyPress(Sender: TObject; var Key: char);
 begin
-  if CompareText(TDBGrid(Sender).SelectedField.FieldName,'libprd')<>0 then
-    Key := UpCase(Key);
+  Key := UpCase(Key);
 end;
 
 procedure TProductW.DeleteProductionPriceActionExecute(Sender: TObject);
@@ -482,26 +478,21 @@ begin
   end;
 end;
 
-procedure TProductW.saveContent;
-begin
-  try
-    if DataObject.Transaction.Active then
-    begin
-      Query.ApplyUpdates;
-      DataObject.Transaction.Commit;
-    end;
-  except
-    on E:EDatabaseError do
-    begin
-      DataObject.Transaction.Rollback;
-      MessageDlg(E.Message, mtError, [mbOk], 0);
-    end;
-  end;
-end;
-
 procedure TProductW.QueryNewRecord(DataSet: TDataSet);
+var
+ q: TSQLQuery;
+ dic: IDictionary;
 begin
   Dataset.FieldByName('active').AsBoolean:=True;
+  q := DataObject.GetQuery;
+  try
+    dic := TDictionary.Create;
+    q.SQL.Add(dic.GetDefaultSalesVatCode);
+    q.Open;
+    Dataset.FieldByName('codtva').AsString:=q.FieldByName('DefaultVATCD').AsString;
+  finally
+    q.Free;
+  end;
   Info.Log('Inserting new product');
 end;
 
@@ -586,6 +577,12 @@ begin
     FieldName:='active';
     Width := 80;
     Title.Caption:='Active';
+  end;
+  with ADBGrid.Columns.Add do
+  begin
+    FieldName:='codtva';
+    Width := 80;
+    Title.Caption:='TVA';
   end;
 end;
 

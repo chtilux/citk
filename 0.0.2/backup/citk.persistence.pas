@@ -43,6 +43,7 @@ type
   ['{DEB022DB-0701-42AC-A626-CBD3C002F47D}']
     function GetSQL: string;
     function GetPasswordChar: string;
+    function GetDefaultSalesVatCode: string;
   end;
 
   { TDictionary }
@@ -51,84 +52,10 @@ type
   public
     function GetSQL: string;
     function GetPasswordChar: string;
-  end;
-
-  IProducts = interface
-  ['{68DAA6BD-8276-43DA-BBD2-AF99C65050A0}']
-    function GetSQL: string;
-    function GetPKSQL: string;
-    function GetPriceSQL(const AType: string): string;
-    function GetInsertPriceSQL: string;
-    function GetUpdatePriceSQL: string;
-    function GetDeletePriceSQL: string;
-    function GetDeleteProductPricesSQL: string;
-  end;
-
-  { TProducts }
-
-  TProducts = class(TInterfacedObject, IProducts)
-  public
-    function GetSQL: string;
-    function GetPKSQL: string;
-    function GetPriceSQL(const AType: string): string;
-    function GetInsertPriceSQL: string;
-    function GetUpdatePriceSQL: string;
-    function GetDeletePriceSQL: string;
-    function GetDeleteProductPricesSQL: string;
+    function GetDefaultSalesVatCode: string;
   end;
 
 implementation
-
-uses
-  ZDataset, Chtilux.Crypt;
-
-{ TProducts }
-
-function TProducts.GetSQL: string;
-begin
-  Result := 'SELECT serprd, codprd, libprd, active'
-           +' FROM products'
-           +' ORDER BY libprd';
-end;
-
-function TProducts.GetPKSQL: string;
-begin
-  Result := 'SELECT GEN_ID(SEQ_PRODUCTS,1) FROM rdb$database';
-end;
-
-function TProducts.GetPriceSQL(const AType: string): string;
-begin
-  Result := 'SELECT serprc,serprd,dateff,qtymin,price,ptype'
-           +' FROM prices'
-           +' WHERE serprd = :serprd'
-           +'   AND ptype = ' + QuotedStr(AType)
-           +' ORDER BY dateff DESC';
-end;
-
-function TProducts.GetInsertPriceSQL: string;
-begin
-  Result := 'INSERT INTO prices(serprc,serprd,dateff,qtymin,price,ptype)'
-           +' VALUES (:serprc,:serprd,:dateff,:qtymin,:price,:ptype)';
-end;
-
-function TProducts.GetUpdatePriceSQL: string;
-begin
-  Result := 'UPDATE prices'
-           +' SET dateff = :dateff'
-           +'    ,qtymin = :qtymin'
-           +'    ,price  = :price'
-           +' WHERE serprc = :serprc';
-end;
-
-function TProducts.GetDeletePriceSQL: string;
-begin
-  Result := 'DELETE FROM prices WHERE serprc = :serprc';
-end;
-
-function TProducts.GetDeleteProductPricesSQL: string;
-begin
-  Result := 'DELETE FROM prices WHERE serprd = :serprd';
-end;
 
 { TPersistence }
 
@@ -261,6 +188,14 @@ begin
   Result := 'SELECT pardc1 as PasswordChar FROM dictionnaire'
            +' WHERE cledic = ' + 'security'.QuotedString
            +'   AND coddic = ' + 'password char'.QuotedString;
+end;
+
+function TDictionary.GetDefaultSalesVatCode: string;
+begin
+  Result := 'SELECT pardc1 AS DefaultVATCD'
+           +' FROM dictionnaire'
+           +' WHERE cledic = ' + 'sales'.QuotedString
+           +'   AND coddic = ' + 'vatcode'.QuotedString;
 end;
 
 end.

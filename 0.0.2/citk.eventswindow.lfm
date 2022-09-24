@@ -1,7 +1,7 @@
 inherited EventsW: TEventsW
   Left = 517
   Height = 517
-  Top = 281
+  Top = 258
   Width = 860
   Caption = 'Events'
   ClientHeight = 517

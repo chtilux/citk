@@ -1,7 +1,7 @@
 object MainW: TMainW
-  Left = 461
+  Left = 655
   Height = 480
-  Top = 207
+  Top = 214
   Width = 780
   Caption = 'Céline in the Kitchen'
   ClientHeight = 460
@@ -39577,6 +39577,9 @@ object MainW: TMainW
       object UsersMenuItem: TMenuItem
         Action = UsersAction
       end
+      object MenuItem2: TMenuItem
+        Action = VATAction
+      end
       object Separator2: TMenuItem
         Caption = '-'
       end
@@ -39627,12 +39630,11 @@ object MainW: TMainW
       OnExecute = EventsActionExecute
       ShortCut = 16453
     end
-  end
-  object SQLQuery1: TSQLQuery
-    FieldDefs = <>
-    Params = <>
-    Macros = <>
-    Left = 299
-    Top = 100
+    object VATAction: TAction
+      Category = 'Application'
+      Caption = 'VAT...'
+      ImageIndex = 6
+      OnExecute = VATActionExecute
+    end
   end
 end

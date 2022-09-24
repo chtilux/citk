@@ -1,0 +1,74 @@
+inherited VATW: TVATW
+  Caption = 'VAT'
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  inherited BottomPanel: TPanel
+    Height = 179
+    Top = 328
+    ClientHeight = 179
+    object DataNavPanel1: TPanel[0]
+      Left = 1
+      Height = 29
+      Top = 1
+      Width = 707
+      Align = alTop
+      ClientHeight = 29
+      ClientWidth = 707
+      TabOrder = 0
+      object DataNav1: TDBNavigator
+        Left = 464
+        Height = 25
+        Top = 1
+        Width = 241
+        Anchors = [akTop, akRight]
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsScaleChilds
+        ChildSizing.EnlargeVertical = crsScaleChilds
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 100
+        ClientHeight = 25
+        ClientWidth = 241
+        DataSource = RateSource
+        Flat = True
+        Options = []
+        TabOrder = 0
+      end
+    end
+    object DataGrid1: TDBGrid[1]
+      Left = 1
+      Height = 148
+      Top = 30
+      Width = 707
+      Align = alClient
+      Color = clWindow
+      Columns = <>
+      DataSource = RateSource
+      TabOrder = 1
+    end
+  end
+  inherited WorkingSpacePanel: TPanel
+    Height = 278
+    ClientHeight = 278
+    inherited DataStatusBar: TStatusBar
+      Top = 251
+    end
+    inherited DataNavPanel: TPanel
+      inherited DataNav: TDBNavigator
+        Hints.Strings = (        )
+      end
+    end
+    inherited DataGrid: TDBGrid
+      Height = 218
+    end
+  end
+  inherited DataSource: TDataSource
+    Left = 456
+    Top = 112
+  end
+  object RateSource: TDataSource[4]
+    Left = 457
+    Top = 388
+  end
+end

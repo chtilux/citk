@@ -12,6 +12,7 @@ type
   ['{911722B3-BE0F-4314-9B27-952D4013CF20}']
     function GetSQL: string;
     function GetPKSQL: string;
+    function GetEventSQL: string;
     function GetDetailSQL: string;
   end;
 
@@ -21,6 +22,7 @@ type
   public
     function GetSQL: string;
     function GetPKSQL: string;
+    function GetEventSQL: string;
     function GetDetailSQL: string;
   end;
 
@@ -38,6 +40,13 @@ end;
 function TEvents.GetPKSQL: string;
 begin
   Result := 'SELECT GEN_ID(SEQ_EVENTS,1) FROM rdb$database';
+end;
+
+function TEvents.GetEventSQL: string;
+begin
+  Result := 'SELECT serevt, begevt, endevt, libevt, active'
+           +' FROM event'
+           +' WHERE serevt = :serevt';
 end;
 
 function TEvents.GetDetailSQL: string;

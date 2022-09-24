@@ -12,9 +12,10 @@ type
   { TMainW }
 
   TMainW = class(TForm)
+    MenuItem2: TMenuItem;
+    VATAction: TAction;
     EventsAction: TAction;
     MenuItem1: TMenuItem;
-    SQLQuery1: TSQLQuery;
     UsersAction: TAction;
     Separator2: TMenuItem;
     UsersMenuItem: TMenuItem;
@@ -40,12 +41,14 @@ type
     procedure FormShow(Sender: TObject);
     procedure ProductsActionExecute(Sender: TObject);
     procedure QuitApplicationActionExecute(Sender: TObject);
+    procedure VATActionExecute(Sender: TObject);
   private
     FInfo: TInfo;
     procedure DisplayDictionary;
     procedure DisplayProducts;
     procedure DisplayCustomers;
     procedure DisplayEvents;
+    procedure DisplayVAT;
     procedure SetInfo(AValue: TInfo);
   public
     property Info: TInfo read FInfo write SetInfo;
@@ -60,7 +63,7 @@ implementation
 
 uses
   citk.utils, citk.dictionary, citk.ProductWindow, citk.customersWindow,
-  citk.EventsWindow;
+  citk.EventsWindow, citk.vat;
 
 { TMainW }
 
@@ -77,6 +80,11 @@ end;
 procedure TMainW.QuitApplicationActionExecute(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TMainW.VATActionExecute(Sender: TObject);
+begin
+  DisplayVAT;
 end;
 
 procedure TMainW.FormDestroy(Sender: TObject);
@@ -137,6 +145,11 @@ procedure TMainW.DisplayEvents;
 begin
   glGlobalInfo.Log('DisplayEvents');
   citk.EventsWindow.DisplayEvents;
+end;
+
+procedure TMainW.DisplayVAT;
+begin
+  citk.vat.DisplayVAT;
 end;
 
 end.

@@ -5,14 +5,43 @@ unit citk.dictionary;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, citk.DataObject;
 
-procedure DisplayDictionary;
+type
+{ IDictionary }
+
+  IDictionary = interface
+  ['{DEB022DB-0701-42AC-A626-CBD3C002F47D}']
+    function GetSQL: string;
+    function GetPasswordChar: string;
+    function GetDefaultSalesVatCode: string;
+    function GetDefaultCustomerID: integer;
+    function GetPaymentMethod: TStrings;
+    function GetNextBillNumber: integer;
+  end;
+
+  { TDictionary }
+
+  TDictionary = class(TInterfacedObject, IDictionary)
+  private
+    FDataObject: IDataObject;
+  public
+    constructor Create(DataObject: IDataObject); virtual; overload;
+    constructor Create; overload;
+    function GetSQL: string;
+    function GetPasswordChar: string;
+    function GetDefaultSalesVatCode: string;
+    function GetDefaultCustomerID: integer;
+    function GetPaymentMethod: TStrings;
+    function GetNextBillNumber: integer;
+  end;
+
+  procedure DisplayDictionary;
 
 implementation
 
 uses
-  citk.DataGridForm, citk.DataObject, SQLDB, citk.global, DBGrids, citk.persistence;
+  citk.DataGridForm, SQLDB, citk.global, DBGrids, citk.persistence, DateUtils;
 
 type
   { TDictionaryColumns }
@@ -52,21 +81,6 @@ begin
     end;
 end;
 
-type
-
-  { TDictionary }
-
-  TDictionary = class(TInterfacedObject, IDictionary)
-  public
-    function GetSQL: string;
-  end;
-  { TDictionary }
-
-  function TDictionary.GetSQL: string;
-  begin
-    Result := 'SELECT * FROM dictionnaire ORDER BY cledic, coddic';
-  end;
-
 procedure DisplayDictionary;
 var
   F: TDataGridForm;
@@ -96,6 +110,116 @@ begin
   finally
     Q.Free;
     dbgh.Free;
+  end;
+end;
+
+{ TDictionary }
+
+constructor TDictionary.Create(DataObject: IDataObject);
+begin
+  FDataObject:=DataObject;
+  Create;
+end;
+
+constructor TDictionary.Create;
+begin
+
+end;
+
+function TDictionary.GetSQL: string;
+begin
+  Result := 'SELECT * FROM dictionnaire ORDER BY cledic, coddic';
+end;
+
+function TDictionary.GetPasswordChar: string;
+begin
+  Result := 'SELECT pardc1 as PasswordChar FROM dictionnaire'
+           +' WHERE cledic = ' + 'security'.QuotedString
+           +'   AND coddic = ' + 'password char'.QuotedString;
+end;
+
+function TDictionary.GetDefaultSalesVatCode: string;
+begin
+  Result := 'SELECT pardc1 AS DefaultVATCD'
+           +' FROM dictionnaire'
+           +' WHERE cledic = ' + 'sales'.QuotedString
+           +'   AND coddic = ' + 'vatcode'.QuotedString;
+end;
+
+function TDictionary.GetDefaultCustomerID: integer;
+begin
+  Result := -1;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT pardc1 FROM dictionnaire'
+             +' WHERE cledic = ''sales'''
+             +'   AND coddic = ''defaultCustomerID''');
+      Open;
+      if not Eof then
+        Result := Fields[0].AsInteger;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TDictionary.GetPaymentMethod: TStrings;
+begin
+  Result := TStringList.Create;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT pardc1 FROM dictionnaire'
+             +' WHERE cledic = ''sales'''
+             +'   AND coddic = ''PaymentMethod''');
+      Open;
+      if not Eof then
+        Result.CommaText := Fields[0].AsString;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TDictionary.GetNextBillNumber: integer;
+var
+  yot: word;
+begin
+  Result := 0;
+  yot := YearOf(Today);
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add(Format('SELECT pardc1 FROM dictionnaire'
+                    +' WHERE cledic = ''BillNumber'''
+                    +'   AND coddic = ''%.4d''',[yot]));
+      Open;
+      if not Eof then
+      begin
+        Result := Fields[0].AsInteger;
+        Close;
+        SQL.Clear;
+        SQL.Add(Format('UPDATE dictionnaire SET pardc1 = :NextBillNumber'
+                      +' WHERE cledic = ''BillNumber'''
+                      +'   AND coddic = ''%.4d''',[yot]));
+        Params[0].AsInteger:=Succ(Result);
+        ExecSQL;
+        FDataObject.Transaction.CommitRetaining;
+      end
+      else
+      begin
+        { nouvel exercice }
+        Close;
+        SQL.Clear;
+        SQL.Add(Format('INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1) VALUES (''BillNumber'',''%.4d'',''Next bill number'',''1'')',[YearOf(Now)]));
+        ExecSQL;
+        FDataObject.Transaction.CommitRetaining;
+        Result := GetNextBillNumber;
+      end;
+    finally
+      Free;
+    end;
   end;
 end;
 

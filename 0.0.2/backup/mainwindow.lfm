@@ -39577,6 +39577,9 @@ object MainW: TMainW
       object UsersMenuItem: TMenuItem
         Action = UsersAction
       end
+      object MenuItem2: TMenuItem
+        Action = VATAction
+      end
       object Separator2: TMenuItem
         Caption = '-'
       end
@@ -39624,14 +39627,14 @@ object MainW: TMainW
       Category = 'Events'
       Caption = 'Events'
       ImageIndex = 5
+      OnExecute = EventsActionExecute
       ShortCut = 16453
     end
-  end
-  object SQLQuery1: TSQLQuery
-    FieldDefs = <>
-    Params = <>
-    Macros = <>
-    Left = 299
-    Top = 100
+    object VATAction: TAction
+      Category = 'Application'
+      Caption = 'VAT...'
+      ImageIndex = 6
+      OnExecute = VATActionExecute
+    end
   end
 end

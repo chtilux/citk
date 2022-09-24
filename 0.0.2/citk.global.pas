@@ -176,9 +176,10 @@ begin
       ini.WriteString('database','dbapwd',Encrypt(Info.Key, 'scraps'));
     Info.DBAPwd:=ini.ReadString('database','dbapwd', Info.Crypter.Encrypt('masterkey'));
 
-    if not ini.ValueExists('database','protocol') then
-      ini.WriteString('database','protocol','firebird-3.0');
-    Info.Protocol:=ini.ReadString('database','protocol','firebird-3.0');
+    { zeos }
+    //if not ini.ValueExists('database','protocol') then
+    //  ini.WriteString('database','protocol','firebird-3.0');
+    //Info.Protocol:=ini.ReadString('database','protocol','firebird-3.0');
 
     if not ini.ValueExists('database','connector type') then
       ini.WriteString('database','connector type','Firebird');

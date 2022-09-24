@@ -12,7 +12,8 @@ function Login(Info: TInfo): boolean;
 implementation
 
 uses
-  Chtilux.Crypt{, ZConnection, ZClasses}, DB, Controls, citk.firebird, citk.persistence, citk.User;
+  Controls, citk.firebird, citk.persistence, citk.User,
+  IBConnection, citk.database, citk.dictionary;
 
 procedure DoBeforeLogin(Info: TInfo);
 var
@@ -24,7 +25,22 @@ begin
   citk.Firebird.SetConnection(Info.Cnx, Info.Transaction);
   citk.firebird.SetLogger(Info.Logger);
   dic := TDictionary.Create;
-  sel := SelectSQLDirect(dic.GetPasswordChar);
+  try
+    sel := SelectSQLDirect(dic.GetPasswordChar);
+  except
+    on E:EIBDatabaseError do
+    begin
+      if (Pos('Table unknown', E.Message) > 0) and
+         (Pos('DICTIONNAIRE', E.Message) > 0) then
+      begin
+        RunDatabaseScript(Info);
+        sel := SelectSQLDirect(dic.GetPasswordChar);
+      end;
+    end
+    else
+      raise;
+  end;
+
   try
     PasswordChar := sel.Values['PasswordChar'].Trim;
     if not PasswordChar.IsEmpty then
@@ -40,58 +56,75 @@ end;
 function Login(Info: TInfo): boolean;
 var
   dlg: TLoginW;
-  user: IUsers;
 begin
   Result := False;
-  if Info.Cnx.Connected then
-    Info.Cnx.Connected:=False;
-  Info.Cnx.UserName:=Info.DBA;
-  Info.Cnx.Password:=Decrypt(Info.Key, Info.DBAPwd);
   try
-    Info.Cnx.Connected:=True;
     { il faut afficher la fenêtre de connexion }
-    if (Info.User.Login='') or (Info.User.Password='')  or (CompareText(Info.user.Password, Info.DefaultUserPassword)=0) then
-    begin
-      DoBeforeLogin(Info);
-      dlg := TLoginW.Create(nil, Info);
-      try
-        if dlg.ShowModal = mrOk then
-        begin
-          Info.User.Login:=dlg.UserNameEdit.Text;
-          Info.Log('Logged as ' + Info.User.Login);
-          Info.LoggedIn:= True;
-          Result := True;
-        end
-        else
-          Info.Log('Not logged in');
-      finally
-        dlg.Free;
-      end;
-    end
-    else
-    begin
-      try
-        if FBTableExists('USERS') then
-        begin
-          { contrôler le tupple login/password }
-          user := TUsers.Create(TFirebirdPersistence.Create(Info.Cnx, Info.Crypter));
-          Info.LoggedIn:=user.LoginPasswordIsValid(Info.User);
-        end
-        else
-        begin
-          Info.User.Login:='SYSDBA';
-          Info.LoggedIn := True;
-          Info.Log('Logged in as SYSDBA');
-        end;
-      except
-        Info.User.Login:='SYSDBA';
-        Info.LoggedIn := True;
-        Info.Log('Logged in as SYSDBA');
-      end;
-      Result := Info.LoggedIn;
+    DoBeforeLogin(Info);
+    Info.Log(Format('User=%s, Password=%s',[Info.User.Login,Info.User.Password]));
+    dlg := TLoginW.Create(nil, Info);
+    try
+      if dlg.ShowModal = mrOk then
+      begin
+        Info.User.Login:=dlg.UserNameEdit.Text;
+        Info.Log('Logged as ' + Info.User.Login);
+        Info.LoggedIn:= True;
+        Result := True;
+      end
+      else
+        Info.Log('Not logged in');
+    finally
+      dlg.Free;
     end;
+
+    //if (Info.User.Login='') or (Info.User.Password='')  or (CompareText(Info.user.Password, Info.DefaultUserPassword)=0) then
+    //begin
+    //
+    //  dlg := TLoginW.Create(nil, Info);
+    //  try
+    //    if dlg.ShowModal = mrOk then
+    //    begin
+    //      Info.User.Login:=dlg.UserNameEdit.Text;
+    //      Info.Log('Logged as ' + Info.User.Login);
+    //      Info.LoggedIn:= True;
+    //      Result := True;
+    //    end
+    //    else
+    //      Info.Log('Not logged in');
+    //  finally
+    //    dlg.Free;
+    //  end;
+    //end
+    //else
+    //begin
+    //  try
+    //    if FBTableExists('USERS') then
+    //    begin
+    //      { contrôler le tupple login/password }
+    //      user := TUsers.Create(TFirebirdPersistence.Create(Info.Cnx, Info.Crypter));
+    //      Info.LoggedIn:=user.LoginPasswordIsValid(Info.User);
+    //    end
+    //    else
+    //    begin
+    //      Info.User.Login:='SYSDBA';
+    //      Info.LoggedIn := True;
+    //      Info.Log('Logged in as SYSDBA');
+    //    end;
+    //  except
+    //    on E:EAssertionFailed do
+    //    begin
+    //      Info.Log(E.Message);
+    //      Info.User.Login:='SYSDBA';
+    //      Info.LoggedIn := True;
+    //      Info.Log('Logged in as SYSDBA');
+    //    end
+    //    else
+    //      raise;
+    //  end;
+    //  Result := Info.LoggedIn;
+    //end;
   except
-    on E:EDatabaseError do
+    on E:EIBDatabaseError do
     begin
       Info.Log(E.Message);
       raise;

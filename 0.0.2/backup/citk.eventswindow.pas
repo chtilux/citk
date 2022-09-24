@@ -114,7 +114,7 @@ end;
 
 procedure TEventsW.Billing(const serevt: integer);
 begin
-  ShowMessage(serevt.ToString);
+  citk.BillingWindow.Billing(Info, serevt);
 end;
 
 procedure TEventsW.DataNavClick(Sender: TObject; Button: TDBNavButtonType);

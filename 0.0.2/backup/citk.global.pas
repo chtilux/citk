@@ -128,7 +128,7 @@ begin
   try
      Info.GlobalPath := ini.ReadString('global','ini path',ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))));
      Info.User.Login:=ini.ReadString('user','login','');
-     Info.User.Password:=ini.ReadString('user','password',''{Info.DefaultUserPassword});
+     Info.User.Password:=ini.ReadString('user','password',Info.DefaultUserPassword);
   finally
     ini.Free;
   end;

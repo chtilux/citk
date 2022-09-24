@@ -51,7 +51,7 @@ end;
 
 function TEvents.GetDetailSQL: string;
 begin
-  Result := 'SELECT libprd, price'
+  Result := 'SELECT serprd, libprd, price'
            +' FROM event_detail d'
            +' WHERE serevt = :serevt'
            +' ORDER BY numseq';
