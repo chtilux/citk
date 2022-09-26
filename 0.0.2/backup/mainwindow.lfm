@@ -1,7 +1,7 @@
 object MainW: TMainW
-  Left = 461
+  Left = 655
   Height = 480
-  Top = 207
+  Top = 214
   Width = 780
   Caption = 'Céline in the Kitchen'
   ClientHeight = 460
@@ -39580,6 +39580,9 @@ object MainW: TMainW
       object MenuItem2: TMenuItem
         Action = VATAction
       end
+      object MenuItem3: TMenuItem
+        Action = DelayRecapAction
+      end
       object Separator2: TMenuItem
         Caption = '-'
       end
@@ -39635,6 +39638,12 @@ object MainW: TMainW
       Caption = 'VAT...'
       ImageIndex = 6
       OnExecute = VATActionExecute
+    end
+    object DelayRecapAction: TAction
+      Category = 'Events'
+      Caption = 'Daily recap...'
+      ImageIndex = 7
+      OnExecute = DelayRecapActionExecute
     end
   end
 end

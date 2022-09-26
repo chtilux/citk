@@ -49,19 +49,11 @@ end;
 
 procedure ConnectDatabase(Connection: TSQLConnector; Info: TInfo);
 begin
-  //try
-    {$I+}
-    Connection.Connected:=True;
-    Info.Cnx := Connection;
-    Info.Transaction:=Connection.Transaction;
-    Log('Database connected');
-  //except
-  //  on E:Exception do
-  //  begin
-  //    Log('ConnectDatabase : ' + E.Message);
-  //    raise EDatabaseConnection.CreateFmt('EDatabaseConnection : %s', [E.Message]);
-  //  end
-  //end;
+  {$I+}  // to get an exception when database file fails
+  Connection.Connected:=True;
+  Info.Cnx := Connection;
+  Info.Transaction:=Connection.Transaction;
+  Log('Database connected');
 end;
 
 function CreateDatabase(Info: TInfo): boolean;
@@ -191,6 +183,11 @@ var
                          'public key'.QuotedString,
                          'clé publique'.QuotedString,
                          DOMAIN.QuotedString]));
+        SQLDirect(Format('UPDATE OR INSERT INTO dictionnaire(cledic,coddic,libdic,pardc1) VALUES (%s,%s,%s,%s)',
+                         ['security'.QuotedString,
+                         'password char'.QuotedString,
+                         ''.QuotedString,
+                         ''*''']));
         SQLDirect('UPDATE users SET password = ' + DOMAIN.QuotedString);
         UpdateDatabaseRelease(Info.DatabaseRelease, Release);
         Info.Transaction.Commit;
@@ -304,7 +301,7 @@ var
     if Release = '0.02' then
     begin
       try
-        if not FBSequenceExists('SEQ_CUSTOMERS') then
+        if not FBSequenceExists('SEQ_BILL') then
     	    SQLDirect('CREATE SEQUENCE SEQ_BILL');
         FBCreateTableColumn('bill','serbill','d_serial_nn','');
         FBCreateTableColumn('bill','datbill','date','not null');
@@ -332,6 +329,99 @@ var
     end;
   end;
 
+  procedure DBScript_0_04;
+  begin
+    if Release = '0.03' then
+    begin
+      try
+        FBCreateTableColumn('bill_detail','serdet','d_serial_nn','');
+        FBCreateTableColumn('bill_detail','serbill','d_serial_nn','');
+        FBCreateTableColumn('bill_detail','serprd','d_serial_nn','');
+        FBCreateTableColumn('bill_detail','libprd','d_libelle_nn','');
+        FBCreateTableColumn('bill_detail','quantity','decimal(9,2)','not null');
+        FBCreateTableColumn('bill_detail','price','d_price_nn','');
+        FBCreateTableColumn('bill_detail','codtva','VARCHAR(3)','not null');
+        FBCreateTableColumn('bill_detail','vatrate','decimal(6,3)','not null');
+        FBAddConstraint('bill_detail','pk_bill_detail','primary key','(serdet)');
+        FBCreateIndex('','i01_bill_detail_bill','bill_detail','serbill');
+        FBAddConstraint('bill_detail','fk_bill_detail_bill','foreign key','(serbill) references bill');
+        Info.Transaction.Commit;
+
+        IncRelease(Release);
+        Log('Release='+Release);
+        UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+        Info.Transaction.Commit;
+        Log(Format('Release %s commited.',[Release]));
+      except
+        on E:Exception do
+        begin
+          Info.Transaction.Rollback;
+          Log(E.Message);
+        end;
+      end;
+    end;
+  end;
+
+  procedure DBScript_0_05;
+  begin
+    if Release = '0.04' then
+    begin
+      try
+        FBCreateTableColumn('bill_vat','serbill','d_serial_nn','');
+        FBCreateTableColumn('bill_vat','codtva','VARCHAR(3)','not null');
+        FBCreateTableColumn('bill_vat','vatrate','decimal(6,3)','not null');
+        FBCreateTableColumn('bill_vat','htv','decimal(9,2)','not null');
+        FBCreateTableColumn('bill_vat','vat','decimal(9,2)','not null');
+        FBAddConstraint('bill_vat','pk_bill_vat','primary key','(serbill,codtva)');
+        FBCreateIndex('','i01_bill_vat_codtva','bill_vat','codtva');
+        FBAddConstraint('bill_vat','fk_bill_vat_tva','foreign key','(codtva) references tva');
+        Info.Transaction.Commit;
+
+        IncRelease(Release);
+        Log('Release='+Release);
+        UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+        Info.Transaction.Commit;
+        Log(Format('Release %s commited.',[Release]));
+      except
+        on E:Exception do
+        begin
+          Info.Transaction.Rollback;
+          Log(E.Message);
+        end;
+      end;
+    end;
+  end;   //procedure DBScript_0_03;
+  //begin
+  //  if Release = '0.02' then
+  //  begin
+  //    try
+  //      if not FBSequenceExists('SEQ_BILL') then
+  //  	    SQLDirect('CREATE SEQUENCE SEQ_BILL');
+  //      FBCreateTableColumn('bill','serbill','d_serial_nn','');
+  //      FBCreateTableColumn('bill','datbill','date','not null');
+  //      FBCreateTableColumn('bill','numbill','integer','not null');
+  //      FBCreateTableColumn('bill','PaymentMethod','VARCHAR(30)','not null');
+  //      FBCreateTableColumn('bill','totttc','decimal(9,2)','not null');
+  //      FBCreateTableColumn('bill','CustomerID','d_serial_nn','');
+  //      FBAddConstraint('bill','pk_bill','primary key','(serbill)');
+  //      FBCreateIndex('','i01_bill_customer','bill','CustomerID');
+  //      FBAddConstraint('bill','fk_bill_customer','foreign key','(CustomerID) references customers');
+  //      Info.Transaction.Commit;
+  //
+  //      IncRelease(Release);
+  //      Log('Release='+Release);
+  //      UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+  //      Info.Transaction.Commit;
+  //      Log(Format('Release %s commited.',[Release]));
+  //    except
+  //      on E:Exception do
+  //      begin
+  //        Info.Transaction.Rollback;
+  //        Log(E.Message);
+  //      end;
+  //    end;
+  //  end;
+  //end;
 begin
   citk.Firebird.SetConnection(Info.Cnx, Info.Transaction);
   citk.Firebird.SetLogger(Info.Logger);
@@ -364,7 +454,8 @@ begin
   DBScript_0_00;
   DBScript_0_01;
   DBScript_0_02;
-
+  DBScript_0_04;
+  DBScript_0_05;
   //if Info.DatabaseRelease = 'x.xx' then
   //begin
   //  IncRelease(Release);

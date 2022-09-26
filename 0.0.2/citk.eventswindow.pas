@@ -50,9 +50,6 @@ type
 
   procedure DisplayEvents;
 
-var
-  EventsW: TEventsW;
-
 implementation
 
 uses

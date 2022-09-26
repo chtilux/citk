@@ -155,7 +155,7 @@ procedure TEventDetailW.DisplaySelection;
     lv.Items.BeginUpdate;
     try
       lv.Items.Clear;
-      AData.First;
+      //AData.First;
       while not AData.Eof do
       begin
         with lv.Items.Add do

@@ -11,6 +11,7 @@ object BillingW: TBillingW
   KeyPreview = True
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   LCLVersion = '2.2.2.0'
   object Panel1: TPanel
     Left = 8
@@ -201,6 +202,16 @@ object BillingW: TBillingW
           Width = 182
           ItemHeight = 0
           TabOrder = 0
+        end
+        object PrintBillCheckbox: TCheckBox
+          Left = 26
+          Height = 19
+          Top = 224
+          Width = 45
+          Caption = 'Print'
+          Checked = True
+          State = cbChecked
+          TabOrder = 1
         end
       end
     end

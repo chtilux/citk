@@ -13,6 +13,7 @@ type
   { TBillingW }
 
   TBillingW = class(TForm)
+    PrintBillCheckbox: TCheckBox;
     CustomerName: TEdit;
     IDEdit: TEdit;
     Label1: TLabel;
@@ -31,6 +32,7 @@ type
     HTVLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
     procedure IDEditExit(Sender: TObject);
     procedure IDEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure ProductsKeyPress(Sender: TObject; var Key: char);
@@ -47,7 +49,7 @@ type
     procedure CleanForm;
     procedure CloseOrder;
     procedure ConfirmBill;
-    function CreateBill: integer;
+    function CreateBill(const PaymentMethod: string; var serbill: integer): integer;
     procedure FillProducts;
     procedure SetCustomerID(AValue: integer);
     procedure SetEvent(AValue: integer);
@@ -71,7 +73,7 @@ implementation
 
 uses
   citk.dictionary, citk.DataObject, citk.customers, Windows,
-  citk.events, citk.products;
+  citk.events, citk.products, citk.bill, SQLDB, DateUtils, citk.PDFOutput;
 
 procedure Billing(Info: TInfo; const serevt: integer);
 var
@@ -180,6 +182,7 @@ begin
       id := Products.Cells[0,i].ToInteger;
       prd := px.GetProduct(id);
       htv := Value / (1+prd.VATRate/100);
+      prd.Free;
       vattot := vattot + (Value - htv);
     end;
   end;
@@ -200,79 +203,6 @@ begin
   cust := TCustomers.Create(TFirebirdDataObject.Create(Info.Cnx, Info.Transaction));
   CustomerName.Text:=cust.GetCustomerName(FCustomerID);
   FillProducts;
-end;
-
-procedure TBillingW.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if Key = VK_ADD then
-  begin
-    Key := 0;
-    ConfirmBill;
-  end;
-end;
-
-procedure TBillingW.ConfirmBill;
-begin
-  if MessageDlg('Close the order ?', mtConfirmation, [mbYes, mbNo], 0, mbYes) = mrYes then
-    CloseOrder
-  else
-  begin
-    Products.SetFocus;
-  end;
-end;
-
-procedure TBillingW.CloseOrder;
-begin
-  TerminateOrder;
-  CleanForm;
-end;
-
-procedure TBillingW.TerminateOrder;
-var
-  dic: IDictionary;
-  pm: TStrings;
-  F: TForm;
-  ctl: TRadioGroup;
-  btn: TBitBtn;
-  PaymentMethod: string;
-  BillNumber: integer;
-begin
-  dic := TDictionary.Create(TFirebirdDataObject.Create(glGlobalInfo.Cnx, glGlobalInfo.Transaction));
-  pm := dic.GetPaymentMethod;
-  try
-    F := TForm.Create(nil);
-    try
-      F.Position:=poScreenCenter;
-      ctl := TRadioGroup.Create(F);
-      ctl.Name := 'pm';
-      ctl.Parent := F;
-      ctl.Items.AddStrings(pm);
-      ctl.ItemIndex:=0;
-      F.AutoSize:=True;
-      btn := TBitBtn.Create(F);
-      btn.Parent:=F;
-      btn.Top := 300;
-      btn.Left := 50;
-      btn.Kind:=bkOk;
-      F.ShowModal;
-      Paymentmethod := ctl.Items[ctl.ItemIndex];
-    finally
-      F.Free;
-    end;
-  finally
-    pm.Free;
-  end;
-  BillNumber := CreateBill;
-  BillHist.Items.Insert(0, Format('N°%d -> %s', [BillNumber, TotalLabel.Caption]));
-end;
-
-function TBillingW.CreateBill: integer;
-var
-  dic: IDictionary;
-begin
-  dic := TDictionary.Create(TFirebirdDataObject.Create(glGlobalInfo.Cnx, glGlobalInfo.Transaction));
-  Result := dic.GetNextBillNumber;
 end;
 
 procedure TBillingW.CleanForm;
@@ -349,6 +279,198 @@ begin
   FEvent:=serevt;
   inherited Create(AOwner);
   Caption := Event.ToString;
+end;
+
+procedure TBillingW.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_ADD then
+  begin
+    Key := 0;
+    ConfirmBill;
+  end;
+end;
+
+procedure TBillingW.FormShow(Sender: TObject);
+begin
+  IDEdit.SetFocus;
+end;
+
+procedure TBillingW.ConfirmBill;
+begin
+  if MessageDlg('Close the order ?', mtConfirmation, [mbYes, mbNo], 0, mbYes) = mrYes then
+    CloseOrder
+  else
+  begin
+    Products.SetFocus;
+  end;
+end;
+
+procedure TBillingW.CloseOrder;
+begin
+  TerminateOrder;
+  CleanForm;
+end;
+
+procedure TBillingW.TerminateOrder;
+var
+  dao: IDataObject;
+  dic: IDictionary;
+  pm: TStrings;
+  F: TForm;
+  ctl: TRadioGroup;
+  btn: TBitBtn;
+  PaymentMethod: string;
+  SerBill, BillNumber: integer;
+  Bill: IBills;
+begin
+  if StrToFloat(TotalLabel.Caption) = 0 then Exit;
+  dao := TFirebirdDataObject.Create(Info.Cnx, Info.Transaction);
+  dic := TDictionary.Create(dao);
+  pm := dic.GetPaymentMethod;
+  try
+    F := TForm.Create(nil);
+    try
+      F.Position:=poScreenCenter;
+      ctl := TRadioGroup.Create(F);
+      ctl.Name := 'pm';
+      ctl.Parent := F;
+      ctl.Items.AddStrings(pm);
+      ctl.ItemIndex:=0;
+      F.AutoSize:=True;
+      btn := TBitBtn.Create(F);
+      btn.Parent:=F;
+      btn.Top := 300;
+      btn.Left := 50;
+      btn.Kind:=bkOk;
+      F.ShowModal;
+      Paymentmethod := ctl.Items[ctl.ItemIndex];
+    finally
+      F.Free;
+    end;
+  finally
+    pm.Free;
+  end;
+  Serbill := 0;  // ne sert à rien mais évite le warning
+  BillNumber := CreateBill(PaymentMethod, SerBill);
+  BillHist.Items.Insert(0, Format('N°%d -> %s (%s)', [BillNumber, TotalLabel.Caption, PaymentMethod]));
+  if PrintBillCheckbox.Checked then
+  begin
+    bill := TBills.Create(dao);
+    bill.Print(SerBill, TBillOutput.Create);
+  end;
+end;
+
+function TBillingW.CreateBill(const PaymentMethod: string; var serbill: integer): integer;
+var
+  dao: IDataObject;
+  bill: IBills;
+  master, detail, vat: TSQLQuery;
+  row: integer;
+  rowqty, rowprice, rowtotal, htv: double;
+  ttc: double;
+  px: IProducts;
+  prd: TProduct;
+  serprd: integer;
+  tva: TVatValue;
+  VatValues: TStrings;
+  VatIndex: integer;
+const
+  ID=0; LIBPRD=1; PRICE=2; QTY=3;// TOTAL=4;
+begin
+  dao := TFirebirdDataObject.Create(glGlobalInfo.Cnx, glGlobalInfo.Transaction);
+  bill := TBills.Create(dao);
+  Result := bill.GetBillNumber;
+  serbill := bill.GetPK;
+  detail := nil; vat := nil; VatValues := nil;
+  master := dao.GetQuery;
+  try
+    master.SQL.Add(bill.GetInsertBillSQL);
+    detail := dao.GetQuery;
+    detail.SQL.Add(bill.GetInsertBillDetailSQL);
+    detail.Prepare;
+    detail.ParamByName('serbill').AsInteger := serbill;
+    vat := dao.GetQuery;
+    vat.SQL.Add(bill.GetInsertBillVatSQL);
+    vat.ParamByName('serbill').AsInteger:=serbill;
+    VatValues := TStringList.Create;
+
+    px := TProducts.Create(dao);
+    ttc := 0;
+    try
+      master.ParamByName('serbill').AsInteger:=serbill;
+      master.ParamByName('datbill').AsDate:=Today;
+      master.ParamByName('numbill').AsInteger:=Result;
+      master.ParamByName('PaymentMethod').AsString:=PaymentMethod;
+      master.ParamByName('totttc').AsFloat:=StrToFloat(TotalLabel.Caption);
+      master.ParamByName('customerid').AsInteger:=string(IDEdit.Text).ToInteger;
+      master.ExecSQL;
+      { pour chaque ligne de produit }
+      for row := 1 to Products.RowCount-1 do
+      begin
+        { si la quantité <> 0 }
+        if TryStrToFloat(Products.Cells[QTY,row], rowqty) then
+        begin
+          if rowqty <> 0 then
+          begin
+            rowprice:=StrToFloatDef(Products.Cells[PRICE,row],0);
+            rowtotal := rowqty * rowprice;
+            ttc := ttc + rowtotal;
+            serprd := StrToInt(Products.Cells[ID,row]);
+            detail.ParamByName('serdet').AsInteger := bill.GetPK;
+            detail.ParamByName('serprd').AsInteger := serprd;
+            detail.ParamByName('libprd').AsString := Products.Cells[LIBPRD,row];
+            detail.ParamByName('quantity').AsFloat := rowqty;
+            detail.ParamByName('price').AsFloat := rowprice;
+            prd := px.GetProduct(serprd);
+            detail.ParamByName('codtva').AsString := prd.VATCode;
+            detail.ParamByName('vatrate').AsFloat:=prd.VATRate;
+            htv := rowTotal/(1+prd.VATRate/100);
+            VatIndex := VatValues.IndexOf(prd.VATCode);
+            if VatIndex > -1 then
+            begin
+              tva := TVatValue(VatValues.Objects[vatIndex]);
+              tva.AddValue(htv,rowtotal-htv);
+            end
+            else
+            begin
+              tva := TVatValue.Create(prd.VATCode,prd.VATRate,htv,rowtotal-htv);
+              VatValues.AddObject(tva.CodTva,tva);
+            end;
+            prd.Free;
+            detail.ExecSQL;
+          end;
+        end;
+      end;
+
+      for VatIndex:=0 to VatValues.Count-1 do
+      begin
+        tva := TVatValue(VatValues.Objects[vatIndex]);
+        vat.ParamByName('codtva').AsString:=tva.CodTva;
+        vat.ParamByName('vatrate').AsFloat:=tva.Rate;
+        vat.ParamByName('htv').AsFloat:=tva.HTV;
+        vat.ParamByName('vat').AsFloat:=tva.VAT;
+        vat.ExecSQL;
+        tva.Free;
+      end;
+      dao.Transaction.CommitRetaining;
+
+      Info.Log(Format('BILL %d created for customer %d', [Result, master.ParamByName('customerid').AsInteger]));
+
+    except
+      on E:Exception do
+      begin
+        dao.Transaction.RollbackRetaining;
+        Info.Log(E.Message);
+        raise;
+      end;
+    end;
+  finally
+    master.free;
+    detail.Free;
+    vat.Free;
+    VatValues.Free;
+  end;
 end;
 
 end.

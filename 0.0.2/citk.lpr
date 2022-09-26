@@ -15,12 +15,12 @@ uses
   { you can add units after this }
   citk.global, citk.Database, Chtilux.Logger, citk.firebird, citk.login,
   citk.loginDialog, citk.utils, citk.user, citk.persistence, citk.encrypt,
-  citk.DataModule, citk.DataGridForm,
-  sqldb, db,
-  citk.dictionary, citk.ProductWindow,
-  citk.customersWindow, citk.customers, citk.EventsWindow, citk.Events, 
-  citk.EventDetail, citk.eventdetailWindow, citk.Billing, citk.BillingWindow,
-  IBConnection, citk.products, citk.vat, citk.VATWindow;
+  citk.DataModule, citk.DataGridForm, sqldb, db, citk.dictionary,
+  citk.ProductWindow, citk.customersWindow, citk.customers, citk.EventsWindow,
+  citk.Events, citk.EventDetail, citk.eventdetailWindow, citk.Billing,
+  citk.BillingWindow, IBConnection, citk.products, citk.vat, citk.VATWindow,
+  citk.bill, citk.Output, citk.PDFOutput, citk.DataObject,
+  citk.DailyrecapWindow, citk.DailyRecap;
 
 {$R *.res}
 
@@ -28,6 +28,12 @@ procedure Log(const Texte: string);
 begin
   glLogger.Log('citk',Texte);
 end;
+
+function IsDebuggerPresent () : integer stdcall; external 'kernel32.dll';
+
+//var
+//  dao: IDataObject;
+//  bill: IBills;
 
 begin
   RequireDerivedFormResource:=True;
@@ -63,7 +69,15 @@ begin
   begin
     try
       Application.Initialize;
-      Login(glGlobalInfo);
+      if IsDebuggerPresent = 1 then
+      begin
+        //dao := TFirebirdDataObject.Create(glGlobalInfo.Cnx, glGlobalInfo.Transaction);
+        //bill := TBills.Create(dao);
+        //bill.Print(104, TBillOutput.Create);
+        Login(glGlobalInfo);
+      end
+      else
+        Login(glGlobalInfo);
     except
       on E:EIBDatabaseError do
       begin

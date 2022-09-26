@@ -52,9 +52,6 @@ type
     procedure SetOnSetDataGridColumns(ADBGrid: TDBGrid); virtual;
   end;
 
-var
-  DataGridForm: TDataGridForm;
-
 implementation
 
 {$R *.lfm}

@@ -12,7 +12,9 @@ type
   { TMainW }
 
   TMainW = class(TForm)
+    DelayRecapAction: TAction;
     MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
     VATAction: TAction;
     EventsAction: TAction;
     MenuItem1: TMenuItem;
@@ -35,6 +37,7 @@ type
     SB: TStatusBar;
     procedure ApplicationDictionaryActionExecute(Sender: TObject);
     procedure CustomersActionExecute(Sender: TObject);
+    procedure DelayRecapActionExecute(Sender: TObject);
     procedure EventsActionExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -49,6 +52,7 @@ type
     procedure DisplayCustomers;
     procedure DisplayEvents;
     procedure DisplayVAT;
+    procedure DisplayDailyRecap;
     procedure SetInfo(AValue: TInfo);
   public
     property Info: TInfo read FInfo write SetInfo;
@@ -63,7 +67,7 @@ implementation
 
 uses
   citk.utils, citk.dictionary, citk.ProductWindow, citk.customersWindow,
-  citk.EventsWindow, citk.vat;
+  citk.EventsWindow, citk.vat, citk.DailyRecapWindow;
 
 { TMainW }
 
@@ -118,6 +122,11 @@ begin
   DisplayCustomers;
 end;
 
+procedure TMainW.DelayRecapActionExecute(Sender: TObject);
+begin
+  DisplayDailyRecap;
+end;
+
 procedure TMainW.EventsActionExecute(Sender: TObject);
 begin
   DisplayEvents;
@@ -149,7 +158,14 @@ end;
 
 procedure TMainW.DisplayVAT;
 begin
+  glGlobalInfo.Log('DisplayVAT');
   citk.vat.DisplayVAT;
+end;
+
+procedure TMainW.DisplayDailyRecap;
+begin
+  glGlobalInfo.Log('DisplayDailyRecap');
+  citk.DailyRecapWindow.DisplayDailyRecap(glGlobalInfo);
 end;
 
 end.

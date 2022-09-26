@@ -32,6 +32,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="lazreport"/>
+      </Item>
+      <Item>
         <PackageName Value="Chtilux"/>
       </Item>
       <Item>
@@ -198,6 +201,33 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="citk.VATWindow"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.bill.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.output.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.Output"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.pdfoutput.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.PDFOutput"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.dailyrecapwindow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DailyRecapW"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="citk.DailyRecapWindow"/>
+      </Unit>
+      <Unit>
+        <Filename Value="citk.dailyrecap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="citk.DailyRecap"/>
       </Unit>
     </Units>
   </ProjectOptions>

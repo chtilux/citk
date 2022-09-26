@@ -28,8 +28,10 @@ type
     procedure FormShow(Sender: TObject);
   private
     FDataObject: IDataObject;
+    FInfo: TInfo;
     FOnSetDataGridColumns: TSetDataGridColumnsProc;
     FQuery: TSQLQuery;
+    procedure SetInfo(AValue: TInfo);
     procedure SetOnSetDataGridColumns(AValue: TSetDataGridColumnsProc);
     procedure SetQuery(AValue: TSQLQuery);
   protected
@@ -40,6 +42,7 @@ type
     property DataObject: IDataObject read FDataObject;
     property Query: TSQLQuery read FQuery write SetQuery;
     property OnSetDataGridColumns: TSetDataGridColumnsProc read FOnSetDataGridColumns write SetOnSetDataGridColumns;
+    property Info: TInfo read FInfo write SetInfo;
   end;
 
   { TSetDataGridColumnsHelper }
@@ -76,6 +79,7 @@ end;
 constructor TDataGridForm.Create(AOwner: TComponent; Info: TInfo);
 begin
   FDataObject := TFirebirdDataObject.Create(Info.Cnx, Info.Transaction);
+  FInfo := Info;
   Create(AOwner, FDataObject);
 end;
 
@@ -121,6 +125,12 @@ procedure TDataGridForm.SetOnSetDataGridColumns(AValue: TSetDataGridColumnsProc
 begin
   if FOnSetDataGridColumns=AValue then Exit;
   FOnSetDataGridColumns:=AValue;
+end;
+
+procedure TDataGridForm.SetInfo(AValue: TInfo);
+begin
+  if FInfo=AValue then Exit;
+  FInfo:=AValue;
 end;
 
 end.

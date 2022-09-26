@@ -1,0 +1,39 @@
+inherited DailyRecapW: TDailyRecapW
+  Caption = 'Daily recap'
+  inherited BottomPanel: TPanel
+    object Button1: TButton[0]
+      Left = 19
+      Height = 25
+      Top = 12
+      Width = 131
+      Action = GetDailyRecapAction
+      TabOrder = 0
+    end
+  end
+  inherited WorkingSpacePanel: TPanel
+    inherited DataNavPanel: TPanel
+      inherited DataNav: TDBNavigator
+        Hints.Strings = (        )
+      end
+    end
+    inherited DataGrid: TDBGrid
+      PopupMenu = PopupMenu1
+    end
+  end
+  object ActionList1: TActionList[4]
+    OnUpdate = ActionList1Update
+    Left = 275
+    Top = 218
+    object GetDailyRecapAction: TAction
+      Caption = 'Get Daily recap'
+      OnExecute = GetDailyRecapActionExecute
+    end
+  end
+  object PopupMenu1: TPopupMenu[5]
+    Left = 396
+    Top = 263
+    object MenuItem1: TMenuItem
+      Action = GetDailyRecapAction
+    end
+  end
+end

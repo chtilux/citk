@@ -37,9 +37,6 @@ type
 
   procedure DisplayCustomers;
 
-var
-  CustomersW: TCustomersW;
-
 implementation
 
 {$R *.lfm}

@@ -165,7 +165,9 @@ begin
     Query.Close;
     Query.Params[0].AsString := '%';
     if TTabControl(Sender).TabIndex > 0 then
-      Query.Params[0].AsString := Query.Params[0].AsString + TTabControl(Sender).Tabs[TTabControl(Sender).TabIndex] + '%';
+      Query.Params[0].AsString := Query.Params[0].AsString +
+                                  TTabControl(Sender).Tabs[TTabControl(Sender).TabIndex] +
+                                  '%';
   finally
     Query.Open;
     Query.EnableControls;

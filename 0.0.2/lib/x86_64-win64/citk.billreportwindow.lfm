@@ -1,0 +1,8 @@
+object BillReportW: TBillReportW
+  Left = 427
+  Height = 422
+  Top = 216
+  Width = 838
+  Caption = 'Bill report'
+  LCLVersion = '2.2.2.0'
+end

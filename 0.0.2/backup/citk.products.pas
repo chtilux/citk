@@ -141,6 +141,7 @@ begin
     finally
       Free;
     end;
+  end;
 end;
 
 //

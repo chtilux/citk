@@ -44,10 +44,13 @@ type
 
   TProduct = class(TObject)
   private
+    FVATCode: string;
     FVATRate: double;
+    procedure SetVATCode(AValue: string);
     procedure SetVATRate(AValue: double);
   public
     property VATRate: double read FVATRate write SetVATRate;
+    property VATCode: string read FVATCode write SetVATCode;
   end;
 
 implementation
@@ -58,6 +61,12 @@ procedure TProduct.SetVATRate(AValue: double);
 begin
   if FVATRate=AValue then Exit;
   FVATRate:=AValue;
+end;
+
+procedure TProduct.SetVATCode(AValue: string);
+begin
+  if FVATCode=AValue then Exit;
+  FVATCode:=AValue;
 end;
 
 { TProduct }
@@ -128,7 +137,7 @@ begin
   with FDataObject.GetQuery do
   begin
     try
-      SQL.Add('SELECT t.rate'
+      SQL.Add('SELECT t.rate, p.codtva'
              +' FROM tautva t INNER JOIN products p ON t.codtva = p.codtva'
              +' WHERE p.serprd = :ID'
              +'   AND t.dateff = (SELECT MAX(x.dateff) FROM tautva x'
@@ -137,6 +146,7 @@ begin
       Params[0].AsInteger:=ID;
       Open;
       Result.VATRate := Fields[0].AsFloat;
+      Result.FVATCode:=Fields[1].AsString;
       Close;
     finally
       Free;
