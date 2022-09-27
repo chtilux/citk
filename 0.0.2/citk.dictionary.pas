@@ -18,6 +18,7 @@ type
     function GetDefaultCustomerID: integer;
     function GetPaymentMethod: TStrings;
     function GetNextBillNumber: integer;
+    function GetOutputDirectory: TFilename;
   end;
 
   { TDictionary }
@@ -34,6 +35,7 @@ type
     function GetDefaultCustomerID: integer;
     function GetPaymentMethod: TStrings;
     function GetNextBillNumber: integer;
+    function GetOutputDirectory: TFilename;
   end;
 
   procedure DisplayDictionary;
@@ -222,6 +224,26 @@ begin
     end;
   end;
 end;
+
+function TDictionary.GetOutputDirectory: TFilename;
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT pardc1 FROM dictionnaire'
+             +' WHERE cledic = ''output'''
+             +'   AND coddic = ''directory''');
+      Open;
+      if not Eof then
+        Result := Fields[0].AsString
+      else
+        Result := 'c:\temp';
+      if not DirectoryExists(Result) then
+         ForceDirectories(Result);
+    finally
+      Free;
+    end;
+  end;  end;
 
 end.
 

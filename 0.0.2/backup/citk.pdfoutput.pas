@@ -12,9 +12,13 @@ type
 
   TPdfOutput = class(TInterfacedObject, IOutput)
   protected
+    FOutputDirectory: TFilename;
   public
     procedure Print(master, detail, vat: TSQLQuery); virtual;
     function CreatePDFDocument: TPDFDocument; virtual;
+    function GetOutputDirectory: TFilename;
+    procedure SetOutputDirectory(const AValue: TFilename);
+    property OutputDirectory: TFilename read GetOutputDirectory write SetOutputDirectory;
   end;
 
   { TBillOutput }
@@ -55,6 +59,17 @@ begin
   page.PaperType:=ptA4;
   page.UnitOfMeasure:=uomMillimeters;
   section.AddPage(page);
+end;
+
+function TPdfOutput.GetOutputDirectory: TFilename;
+begin
+  Result := FOutputDirectory;
+end;
+
+procedure TPdfOutput.SetOutputDirectory(const AValue: TFilename);
+begin
+  if FOutputDirectory<>AValue then
+    FOutputDirectory:=AValue;
 end;
 
 { TBillOutput }

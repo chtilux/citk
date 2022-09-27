@@ -31,7 +31,10 @@ type
 implementation
 
 uses
-  citk.DailyRecap, SQLDB, citk.DataObject;
+  citk.DailyRecap, SQLDB, citk.DataObject, citk.Output, citk.dictionary,
+  ShellApi;
+
+{$R *.lfm}
 
 procedure DisplayDailyRecap(Info: TInfo);
 var
@@ -56,8 +59,6 @@ begin
   end;
 end;
 
-{$R *.lfm}
-
 { TDailyRecapW }
 
 procedure TDailyRecapW.GetDailyRecapActionExecute(Sender: TObject);
@@ -76,11 +77,17 @@ procedure TDailyRecapW.GetDailyRecap(const datbill: TDate);
 var
   dao: IDataObject;
   dlr: IDailyRecap;
+  otp: IOutput;
+  dic: IDictionary;
 begin
   dao := TFirebirdDataObject.Create(Info.Cnx, Info.Transaction);
   dlr := TDailyRecap.Create(dao);
-  dlr.Print(datbill, TDailyRecapOutput.Create);
-  Info.Log(Format('Daily recap due date %s generated',[DateToStr(datbill)]));
+  otp := TDailyRecapOutput.Create;
+  dic := TDictionary.Create(dao);
+  otp.OutputDirectory:=dic.GetOutputDirectory;
+  dlr.Print(datbill, otp);
+  Info.Log(Format('Daily recap due date %s generated to %s',[DateToStr(datbill),otp.OutputDirectory]));
+  ShellExecute(0,'open',PChar(otp.OutputDirectory),nil,nil,1);
 end;
 
 end.

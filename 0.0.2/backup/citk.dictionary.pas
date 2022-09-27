@@ -212,7 +212,7 @@ begin
         { nouvel exercice }
         Close;
         SQL.Clear;
-        SQL.Add(Format('INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1) VALUES (''BillNumber'',''%.4d'',''Next bill number'',''1'')',[YearOf(Now)]));
+        SQL.Add(Format('INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1) VALUES (''BillNumber'',''%.4d'',''Next bill number'',''1'')',[yot]));
         ExecSQL;
         FDataObject.Transaction.CommitRetaining;
         Result := GetNextBillNumber;

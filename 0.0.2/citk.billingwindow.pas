@@ -72,8 +72,9 @@ implementation
 {$R *.lfm}
 
 uses
-  citk.dictionary, citk.DataObject, citk.customers, Windows,
-  citk.events, citk.products, citk.bill, SQLDB, DateUtils, citk.PDFOutput;
+  citk.dictionary, citk.DataObject, citk.customers, Windows, citk.Output,
+  citk.events, citk.products, citk.bill, SQLDB, DateUtils, citk.PDFOutput,
+  ShellApi;
 
 procedure Billing(Info: TInfo; const serevt: integer);
 var
@@ -323,6 +324,7 @@ var
   PaymentMethod: string;
   SerBill, BillNumber: integer;
   Bill: IBills;
+  bo: IOutput;
 begin
   if StrToFloat(TotalLabel.Caption) = 0 then Exit;
   dao := TFirebirdDataObject.Create(Info.Cnx, Info.Transaction);
@@ -357,7 +359,10 @@ begin
   if PrintBillCheckbox.Checked then
   begin
     bill := TBills.Create(dao);
-    bill.Print(SerBill, TBillOutput.Create);
+    bo:=TBillOutput.Create;
+    bo.OutputDirectory:=dic.GetOutputDirectory;
+    bill.Print(SerBill, bo);
+    ShellExecute(0,'open',PChar(bo.OutputDirectory),nil,nil,1);
   end;
 end;
 
