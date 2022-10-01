@@ -68,6 +68,8 @@ type
     BottomPanel: TPanel;
     WorkingSpacePanel: TPanel;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     FDataObject: IDataObject;
@@ -96,6 +98,9 @@ type
   end;
 
 implementation
+
+uses
+  Chtilux.Utils;
 
 {$R *.lfm}
 
@@ -127,6 +132,16 @@ procedure TDataGridForm.FormClose(Sender: TObject; var CloseAction: TCloseAction
   );
 begin
   SaveContent;
+end;
+
+procedure TDataGridForm.FormCreate(Sender: TObject);
+begin
+  readFormPos(Self, nil);
+end;
+
+procedure TDataGridForm.FormDestroy(Sender: TObject);
+begin
+  writeFormPos(Self, nil);
 end;
 
 procedure TDataGridForm.FormShow(Sender: TObject);

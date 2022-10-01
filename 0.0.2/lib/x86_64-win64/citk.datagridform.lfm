@@ -8,6 +8,8 @@ object DataGridForm: TDataGridForm
   ClientWidth = 709
   Color = 13095133
   OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   LCLVersion = '2.2.2.0'
   object TopPanel: TPanel

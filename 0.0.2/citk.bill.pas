@@ -60,6 +60,7 @@ type
     function GetInsertBillVatSQL: string;
     procedure Print(const serbill: integer);
     procedure Print(const serbill: integer; OutputMode: IOutput);
+    function GetBillOfTheDaySQL: string;
   end;
 
   { TBills }
@@ -69,7 +70,8 @@ type
     FDataObject: IDataObject;
     function GetPKSQL: string;
   public
-    constructor Create(DataObject: IDataObject);
+    constructor Create; overload;
+    constructor Create(DataObject: IDataObject); overload;
     function GetPK: integer;
     function GetBillNumber: integer;
     function GetInsertBillSQL: string;
@@ -77,6 +79,7 @@ type
     function GetInsertBillVatSQL: string;
     procedure Print(const serbill: integer);                      overload;
     procedure Print(const serbill: integer; OutputMode: IOutput); overload;
+    function GetBillOfTheDaySQL: string;
   end;
 
   { TVatValue }
@@ -153,9 +156,15 @@ begin
   Result := 'SELECT GEN_ID(seq_bill,1) FROM rdb$database';
 end;
 
+constructor TBills.Create;
+begin
+
+end;
+
 constructor TBills.Create(DataObject: IDataObject);
 begin
   FDataObject := DataObject;
+  Create;
 end;
 
 function TBills.GetPK: integer;
@@ -285,6 +294,14 @@ begin
     detail.Free;
     vat.Free;
   end;
+end;
+
+function TBills.GetBillOfTheDaySQL: string;
+begin
+  Result := 'SELECT numbill,paymentmethod,totttc,custname'
+           +' FROM bill b INNER JOIN customers c ON b.customerid = c.sercust'
+           +' WHERE datbill = :ADate'
+           +' ORDER BY 1 DESC';
 end;
 
 end.

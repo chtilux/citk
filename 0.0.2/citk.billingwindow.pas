@@ -56,6 +56,7 @@ type
   { TBillingW }
 
   TBillingW = class(TForm)
+    DisplayBillCheckBox: TCheckBox;
     PrintBillCheckbox: TCheckBox;
     CustomerName: TEdit;
     IDEdit: TEdit;
@@ -74,13 +75,11 @@ type
     VatLabel: TLabel;
     HTVLabel: TLabel;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure IDEditExit(Sender: TObject);
     procedure IDEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure ProductsKeyPress(Sender: TObject; var Key: char);
-    procedure ProductsSetEditText(Sender: TObject; ACol, ARow: Integer;
-      const Value: string);
     procedure ProductsValidateEntry(sender: TObject; aCol, aRow: Integer;
       const OldValue: string; var NewValue: String);
   private
@@ -94,6 +93,7 @@ type
     procedure ConfirmBill;
     function CreateBill(const PaymentMethod: string; var serbill: integer): integer;
     procedure FillProducts;
+    procedure LoadBillOfTheDay;
     procedure SetCustomerID(AValue: integer);
     procedure SetEvent(AValue: integer);
     procedure SetInfo(AValue: TInfo);
@@ -117,7 +117,7 @@ implementation
 uses
   citk.dictionary, citk.DataObject, citk.customers, Windows, citk.Output,
   citk.events, citk.products, citk.bill, SQLDB, DateUtils, citk.PDFOutput,
-  ShellApi;
+  ShellApi, chtilux.utils;
 
 procedure Billing(Info: TInfo; const serevt: integer);
 var
@@ -169,30 +169,19 @@ begin
   end;
 end;
 
-procedure TBillingW.ProductsKeyPress(Sender: TObject; var Key: char);
-begin
-
-end;
-
-procedure TBillingW.ProductsSetEditText(Sender: TObject; ACol, ARow: Integer;
-  const Value: string);
-begin
-
-end;
-
 procedure TBillingW.ProductsValidateEntry(sender: TObject; aCol, aRow: Integer;
   const OldValue: string; var NewValue: String);
 var
-  qty: double;
+  InputValue: double;
 begin
-  if ACol <> 3 then
+  if (ACol <> 2) and (ACol <> 3) then
   begin
     NewValue := OldValue;
     MessageBeep(0);
   end
   else
   begin
-    if not TryStrToFloat(NewValue, qty) then
+    if not TryStrToFloat(NewValue, InputValue) then
     begin
       NewValue := OldValue;
       MessageBeep(0);
@@ -247,6 +236,20 @@ begin
   cust := TCustomers.Create(TFirebirdDataObject.Create(Info.Cnx, Info.Transaction));
   CustomerName.Text:=cust.GetCustomerName(FCustomerID);
   FillProducts;
+  PrintBillCheckbox.Checked:=dic.GetPrintBillOption;
+  DisplayBillCheckBox.Checked:=dic.GetDisplayBillOption;
+  LoadBillOfTheDay;
+  readFormPos(Self, nil);
+end;
+
+procedure TBillingW.FormDestroy(Sender: TObject);
+var
+  dic: IDictionary;
+begin
+  dic := TDictionary.Create(TFirebirdDataObject.Create(Info.Cnx, Info.Transaction));
+  dic.SetDisplayBillOption(DisplayBillCheckBox.Checked);
+  dic.SetPrintBillOption(PrintBillCheckbox.Checked);
+  writeFormPos(Self, nil);
 end;
 
 procedure TBillingW.CleanForm;
@@ -295,6 +298,32 @@ begin
     finally
       Free;
     end;
+  end;
+end;
+
+procedure TBillingW.LoadBillOfTheDay;
+var
+  dao: IDataObject;
+  bill: IBills;
+  z: TSQLQuery;
+begin
+  dao := TFirebirdDataObject.Create(Info.Cnx, Info.Transaction);
+  bill := TBills.Create;
+  z := dao.GetQuery;
+  try
+    z.SQL.Add(bill.GetBillOfTheDaySQL);
+    z.Params[0].AsDate:=Today;
+    z.Open;
+    while not z.Eof do
+    begin
+      BillHist.Items.Add(Format('N°%d : %.2f€ (%s, %s)',[z.FieldByName('numbill').AsInteger,
+                                                         z.FieldByName('totttc').AsFloat,
+                                                         z.FieldByName('paymentmethod').AsString,
+                                                         z.FieldByName('custname').AsString]));
+      z.Next;
+    end;
+  finally
+    z.Free;
   end;
 end;
 
@@ -369,7 +398,7 @@ var
   Bill: IBills;
   bo: IOutput;
 begin
-  if StrToFloat(TotalLabel.Caption) = 0 then Exit;
+  if not(PrintBillCheckbox.Checked) or (StrToFloat(TotalLabel.Caption) = 0) then Exit;
   dao := TFirebirdDataObject.Create(Info.Cnx, Info.Transaction);
   dic := TDictionary.Create(dao);
   pm := dic.GetPaymentMethod;
@@ -398,15 +427,13 @@ begin
   end;
   Serbill := 0;  // ne sert à rien mais évite le warning
   BillNumber := CreateBill(PaymentMethod, SerBill);
-  BillHist.Items.Insert(0, Format('N°%d -> %s (%s)', [BillNumber, TotalLabel.Caption, PaymentMethod]));
-  if PrintBillCheckbox.Checked then
-  begin
-    bill := TBills.Create(dao);
-    bo:=TBillOutput.Create;
-    bo.OutputDirectory:=dic.GetOutputDirectory;
-    bill.Print(SerBill, bo);
+  BillHist.Items.Insert(0, Format('N°%d -> %s (%s, %s)', [BillNumber, TotalLabel.Caption, PaymentMethod, CustomerName.Text]));
+  bill := TBills.Create(dao);
+  bo:=TBillOutput.Create;
+  bo.OutputDirectory:=dic.GetOutputDirectory;
+  bill.Print(SerBill, bo);
+  if DisplayBillCheckBox.Checked then
     ShellExecute(0,'open',PChar(bo.OutputDirectory),nil,nil,1);
-  end;
 end;
 
 function TBillingW.CreateBill(const PaymentMethod: string; var serbill: integer): integer;

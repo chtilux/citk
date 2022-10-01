@@ -1,4 +1,47 @@
 unit citk.dictionary;
+(*
+    This file is part of citk.
+
+    CelineInTheKitchen software suite. Copyright (C) 2022 Luc Lacroix
+      chtilux software
+
+  *** BEGIN LICENSE BLOCK *****
+  Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+  The contents of this file are subject to the Mozilla Public License Version
+  1.1 (the "License"); you may not use this file except in compliance with
+  the License. You may obtain a copy of the License at
+  http://www.mozilla.org/MPL
+
+  Software distributed under the License is distributed on an "AS IS" basis,
+  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+  for the specific language governing rights and limitations under the License.
+
+  The Original Code is citk.
+
+  The Initial Developer of the Original Code is Luc Lacroix.
+
+  Portions created by the Initial Developer are Copyright (C) 2022
+  the Initial Developer. All Rights Reserved.
+
+  Contributor(s):
+    Luc Lacroix (chtilux)
+
+  Alternatively, the contents of this file may be used under the terms of
+  either the GNU General Public License Version 2 or later (the "GPL"), or
+  the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  in which case the provisions of the GPL or the LGPL are applicable instead
+  of those above. If you wish to allow use of your version of this file only
+  under the terms of either the GPL or the LGPL, and not to allow others to
+  use your version of this file under the terms of the MPL, indicate your
+  decision by deleting the provisions above and replace them with the notice
+  and other provisions required by the GPL or the LGPL. If you do not delete
+  the provisions above, a recipient may use your version of this file under
+  the terms of any one of the MPL, the GPL or the LGPL.
+
+  ***** END LICENSE BLOCK *****
+
+*)
 
 {$mode ObjFPC}{$H+}
 
@@ -19,6 +62,10 @@ type
     function GetPaymentMethod: TStrings;
     function GetNextBillNumber: integer;
     function GetOutputDirectory: TFilename;
+    function GetPrintBillOption: boolean;
+    function GetDisplayBillOption: boolean;
+    procedure SetPrintBillOption(const Value: boolean);
+    procedure SetDisplayBillOption(const Value: boolean);
   end;
 
   { TDictionary }
@@ -36,6 +83,10 @@ type
     function GetPaymentMethod: TStrings;
     function GetNextBillNumber: integer;
     function GetOutputDirectory: TFilename;
+    function GetPrintBillOption: boolean;
+    function GetDisplayBillOption: boolean;
+    procedure SetPrintBillOption(const Value: boolean);
+    procedure SetDisplayBillOption(const Value: boolean);
   end;
 
   procedure DisplayDictionary;
@@ -243,7 +294,80 @@ begin
     finally
       Free;
     end;
-  end;  end;
+  end;
+end;
+
+function TDictionary.GetPrintBillOption: boolean;
+begin
+  Result := True;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT COALESCE(pardc1,''1'') FROM dictionnaire'
+             +' WHERE cledic = ''sales'''
+             +'   AND coddic = ''PrintBill''');
+      Open;
+      if not Eof then
+        Result := Fields[0].AsString = '1';
+      Close;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TDictionary.GetDisplayBillOption: boolean;
+begin
+  Result := True;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT COALESCE(pardc1,''1'') FROM dictionnaire'
+             +' WHERE cledic = ''sales'''
+             +'   AND coddic = ''DisplayBill''');
+      Open;
+      if not Eof then
+        Result := Fields[0].AsString = '1';
+      Close;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TDictionary.SetPrintBillOption(const Value: boolean);
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('UPDATE OR INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1)'
+             +' VALUES (:cledic,:coddic,:libdic,:pardc1)');
+      ParamByName('cledic').AsString:='sales';
+      ParamByName('coddic').AsString:='PrintBill';
+      ParamByName('libdic').AsString:='Bill is printed when pardc1=1';
+      ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TDictionary.SetDisplayBillOption(const Value: boolean);
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('UPDATE OR INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1)'
+             +' VALUES (:cledic,:coddic,:libdic,:pardc1)');
+      ParamByName('cledic').AsString:='sales';
+      ParamByName('coddic').AsString:='DisplayBill';
+      ParamByName('libdic').AsString:='PDF Bill is displayed when pardc1=1';
+      ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
+    finally
+      Free;
+    end;
+  end;
+end;
 
 end.
 

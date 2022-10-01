@@ -110,7 +110,7 @@ implementation
 
 uses
   citk.utils, citk.dictionary, citk.ProductWindow, citk.customersWindow,
-  citk.EventsWindow, citk.vat, citk.DailyRecapWindow;
+  citk.EventsWindow, citk.vat, citk.DailyRecapWindow, Chtilux.Utils;
 
 { TMainW }
 

@@ -62,6 +62,10 @@ type
     function GetPaymentMethod: TStrings;
     function GetNextBillNumber: integer;
     function GetOutputDirectory: TFilename;
+    function GetPrintBillOption: boolean;
+    function GetDisplayBillOption: boolean;
+    procedure SetPrintBillOption(const Value: boolean);
+    procedure SetDisplayBillOption(const Value: boolean);
   end;
 
   { TDictionary }
@@ -79,6 +83,10 @@ type
     function GetPaymentMethod: TStrings;
     function GetNextBillNumber: integer;
     function GetOutputDirectory: TFilename;
+    function GetPrintBillOption: boolean;
+    function GetDisplayBillOption: boolean;
+    procedure SetPrintBillOption(const Value: boolean);
+    procedure SetDisplayBillOption(const Value: boolean);
   end;
 
   procedure DisplayDictionary;
@@ -286,7 +294,82 @@ begin
     finally
       Free;
     end;
-  end;  end;
+  end;
+end;
+
+function TDictionary.GetPrintBillOption: boolean;
+begin
+  Result := True;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT COALESCE(pardc1,''1'') FROM dictionnaire'
+             +' WHERE cledic = ''sales'''
+             +'   AND coddic = ''PrintBill''');
+      Open;
+      if not Eof then
+        Result := Fields[0].AsString = '1';
+      Close;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TDictionary.GetDisplayBillOption: boolean;
+begin
+  Result := True;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT COALESCE(pardc1,''1'') FROM dictionnaire'
+             +' WHERE cledic = ''sales'''
+             +'   AND coddic = ''DisplayBill''');
+      Open;
+      if not Eof then
+        Result := Fields[0].AsString = '1';
+      Close;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TDictionary.SetPrintBillOption(const Value: boolean);
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('UPDATE OR INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1)'
+             +' VALUES (:cledic,:coddic,:libdic,:pardc1)');
+      ParamByName('cledic').AsString:='sales';
+      ParamByName('coddic').AsString:='PrintBill';
+      ParamByName('libdic').AsString:='Bill is printed when pardc1=1';
+      ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
+      ExecSQL;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+procedure TDictionary.SetDisplayBillOption(const Value: boolean);
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('UPDATE OR INSERT INTO dictionnaire (cledic,coddic,libdic,pardc1)'
+             +' VALUES (:cledic,:coddic,:libdic,:pardc1)');
+      ParamByName('cledic').AsString:='sales';
+      ParamByName('coddic').AsString:='DisplayBill';
+      ParamByName('libdic').AsString:='PDF Bill is displayed when pardc1=1';
+      ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
+      ExecSQL;
+    finally
+      Free;
+    end;
+  end;
+end;
 
 end.
 
