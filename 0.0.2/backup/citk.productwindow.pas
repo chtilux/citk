@@ -82,7 +82,7 @@ implementation
 {$R *.lfm}
 
 uses
-  citk.persistence, DateUtils, citk.products, citk.dictionary;
+  DateUtils, citk.products, citk.dictionary;
 
 type
 

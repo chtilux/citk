@@ -98,11 +98,9 @@ begin
                   +' SET pardc1 = %s'
                   +'    ,pardc4 = CAST(CURRENT_TIMESTAMP AS VARCHAR(50))'
                   +' WHERE cledic = %s'
-                  +'   AND coddic = %s'{
-                  +'   AND pardc1 = %s'},[NewRelease.QuotedString,
+                  +'   AND coddic = %s',[NewRelease.QuotedString,
                                          'database'.QuotedString,
-                                         'release'.QuotedString{,
-                                          CurrentRelease.QuotedString}]));
+                                         'release'.QuotedString]));
   Log(Format('Database release updated from %s to %s', [CurrentRelease.QuotedString, NewRelease.QuotedString]));
 end;
 
@@ -187,7 +185,7 @@ var
                          ['security'.QuotedString,
                          'password char'.QuotedString,
                          ''.QuotedString,
-                         ''*''']));
+                         string('*').QuotedString]));
         SQLDirect('UPDATE users SET password = ' + DOMAIN.QuotedString);
         UpdateDatabaseRelease(Info.DatabaseRelease, Release);
         Info.Transaction.Commit;

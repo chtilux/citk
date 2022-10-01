@@ -39,22 +39,6 @@ type
     procedure SetUserPassword(const Login, Password: string); override;
   end;
 
-  IDictionary = interface
-  ['{DEB022DB-0701-42AC-A626-CBD3C002F47D}']
-    function GetSQL: string;
-    function GetPasswordChar: string;
-    function GetDefaultSalesVatCode: string;
-  end;
-
-  { TDictionary }
-
-  TDictionary = class(TInterfacedObject, IDictionary)
-  public
-    function GetSQL: string;
-    function GetPasswordChar: string;
-    function GetDefaultSalesVatCode: string;
-  end;
-
 implementation
 
 { TPersistence }
@@ -174,28 +158,6 @@ begin
   finally
     z.Free;
   end;
-end;
-
-{ TDictionary }
-
-function TDictionary.GetSQL: string;
-begin
-  Result := 'SELECT * FROM dictionnaire ORDER BY cledic, coddic';
-end;
-
-function TDictionary.GetPasswordChar: string;
-begin
-  Result := 'SELECT pardc1 as PasswordChar FROM dictionnaire'
-           +' WHERE cledic = ' + 'security'.QuotedString
-           +'   AND coddic = ' + 'password char'.QuotedString;
-end;
-
-function TDictionary.GetDefaultSalesVatCode: string;
-begin
-  Result := 'SELECT pardc1 AS DefaultVATCD'
-           +' FROM dictionnaire'
-           +' WHERE cledic = ' + 'sales'.QuotedString
-           +'   AND coddic = ' + 'vatcode'.QuotedString;
 end;
 
 end.

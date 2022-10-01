@@ -119,9 +119,15 @@ var
 begin
   { on recherche le fichier ini local dans le répertoire de l'exécutable }
   Filename := Format('%s\%s_local.ini',[ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))), Info.Domain]);
+  Info.Log('Looking for local ini into : ' + Filename);
+  Info.Log(Format('FileExists ? : %s', [BoolToStr(FileExists(Filename),True)]));
   { sinon répertoire de l'utilisateur }
   if not FileExists(Filename) then
+  begin
     FileName := Format('%s\%s_local.ini',[ExcludeTrailingPathDelimiter(ExtractFilePath(GetEnvironmentVariable('USERPROFILE')+'\chtilux\')), Info.Domain]);
+    Info.Log('Looking for local ini into : ' + Filename);
+    Info.Log(Format('FileExists ? : %s', [BoolToStr(FileExists(Filename),True)]));
+  end;
 
   Info.LocalPath:=ExcludeTrailingPathDelimiter(ExtractFilePath(Filename));
   ini := TIniFile.Create(Filename);
@@ -129,11 +135,15 @@ begin
      Info.GlobalPath := ini.ReadString('global','ini path',ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))));
      Info.User.Login:=ini.ReadString('user','login','');
      Info.User.Password:=ini.ReadString('user','password',Info.DefaultUserPassword);
+     if not ini.ValueExists('global','ini path') then
+       ini.WriteString('global','ini path', Info.GlobalPath);
   finally
     ini.Free;
   end;
 
   Filename := Format('%s\%s_global.ini',[ExcludeTrailingPathDelimiter(Info.GlobalPath), Info.Domain]);
+  Info.Log('Looking for global ini into : ' + Filename);
+  Info.Log(Format('FileExists ? : %s', [BoolToStr(FileExists(Filename),True)]));
   ini := TInifile.Create(Filename);
   try
     if not ini.ValueExists('security','public key') then
@@ -153,12 +163,12 @@ begin
       if params.Values['server'] <> '' then
         Info.Server:=params.Values['server']
       else
-        Info.Server:=ini.ReadString('database','server','');
+        Info.Server:=ini.ReadString('database','server','localhost');
 
       if params.Values['alias'] <> '' then
         Info.Alias:=params.Values['alias']
       else
-        Info.Alias:=ini.ReadString('database','alias','');
+        Info.Alias:=ini.ReadString('database','alias','citk');
 
       if params.Values['ConnectorType'] <> '' then
         Info.ConnectorType:=params.Values['ConnectorType']
@@ -176,14 +186,15 @@ begin
       ini.WriteString('database','dbapwd',Encrypt(Info.Key, 'scraps'));
     Info.DBAPwd:=ini.ReadString('database','dbapwd', Info.Crypter.Encrypt('masterkey'));
 
-    if not ini.ValueExists('database','protocol') then
-      ini.WriteString('database','protocol','firebird-3.0');
-    Info.Protocol:=ini.ReadString('database','protocol','firebird-3.0');
-
     if not ini.ValueExists('database','connector type') then
       ini.WriteString('database','connector type','Firebird');
     Info.ConnectorType:=ini.ReadString('database','connector type','Firebird');
 
+    if not ini.ValueExists('database','server') then
+      ini.WriteString('database','server',Info.Server);
+
+    if not ini.ValueExists('database','Alias') then
+      ini.WriteString('database','Alias',Info.Alias);
 
   finally
     ini.Free;

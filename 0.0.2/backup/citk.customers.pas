@@ -14,7 +14,7 @@ type
     function GetSQL: string;
     function GetPKSQL: string;
     function GetCustomerName(const ID: integer): string;
-    function GetCustomer(const ANamePart: string): string;
+    function GetCustomerName(const ANamePart: string): string;
   end;
 
   { TCustomers }

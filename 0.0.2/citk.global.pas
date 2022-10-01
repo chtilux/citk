@@ -1,4 +1,47 @@
 unit citk.global;
+(*
+    This file is part of citk.
+
+    CelineInTheKitchen software suite. Copyright (C) 2022 Luc Lacroix
+      chtilux software
+
+  *** BEGIN LICENSE BLOCK *****
+  Version: MPL 1.1/GPL 2.0/LGPL 2.1
+
+  The contents of this file are subject to the Mozilla Public License Version
+  1.1 (the "License"); you may not use this file except in compliance with
+  the License. You may obtain a copy of the License at
+  http://www.mozilla.org/MPL
+
+  Software distributed under the License is distributed on an "AS IS" basis,
+  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+  for the specific language governing rights and limitations under the License.
+
+  The Original Code is citk.
+
+  The Initial Developer of the Original Code is Luc Lacroix.
+
+  Portions created by the Initial Developer are Copyright (C) 2022
+  the Initial Developer. All Rights Reserved.
+
+  Contributor(s):
+    Luc Lacroix (chtilux)
+
+  Alternatively, the contents of this file may be used under the terms of
+  either the GNU General Public License Version 2 or later (the "GPL"), or
+  the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+  in which case the provisions of the GPL or the LGPL are applicable instead
+  of those above. If you wish to allow use of your version of this file only
+  under the terms of either the GPL or the LGPL, and not to allow others to
+  use your version of this file under the terms of the MPL, indicate your
+  decision by deleting the provisions above and replace them with the notice
+  and other provisions required by the GPL or the LGPL. If you do not delete
+  the provisions above, a recipient may use your version of this file under
+  the terms of any one of the MPL, the GPL or the LGPL.
+
+  ***** END LICENSE BLOCK *****
+
+*)
 
 {$mode Delphi}{$H+}
 
@@ -119,9 +162,15 @@ var
 begin
   { on recherche le fichier ini local dans le répertoire de l'exécutable }
   Filename := Format('%s\%s_local.ini',[ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))), Info.Domain]);
+  Info.Log('Looking for local ini into : ' + Filename);
+  Info.Log(Format('FileExists ? : %s', [BoolToStr(FileExists(Filename),True)]));
   { sinon répertoire de l'utilisateur }
   if not FileExists(Filename) then
+  begin
     FileName := Format('%s\%s_local.ini',[ExcludeTrailingPathDelimiter(ExtractFilePath(GetEnvironmentVariable('USERPROFILE')+'\chtilux\')), Info.Domain]);
+    Info.Log('Looking for local ini into : ' + Filename);
+    Info.Log(Format('FileExists ? : %s', [BoolToStr(FileExists(Filename),True)]));
+  end;
 
   Info.LocalPath:=ExcludeTrailingPathDelimiter(ExtractFilePath(Filename));
   ini := TIniFile.Create(Filename);
@@ -129,11 +178,15 @@ begin
      Info.GlobalPath := ini.ReadString('global','ini path',ExcludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))));
      Info.User.Login:=ini.ReadString('user','login','');
      Info.User.Password:=ini.ReadString('user','password',Info.DefaultUserPassword);
+     if not ini.ValueExists('global','ini path') then
+       ini.WriteString('global','ini path', Info.GlobalPath);
   finally
     ini.Free;
   end;
 
   Filename := Format('%s\%s_global.ini',[ExcludeTrailingPathDelimiter(Info.GlobalPath), Info.Domain]);
+  Info.Log('Looking for global ini into : ' + Filename);
+  Info.Log(Format('FileExists ? : %s', [BoolToStr(FileExists(Filename),True)]));
   ini := TInifile.Create(Filename);
   try
     if not ini.ValueExists('security','public key') then
@@ -153,12 +206,12 @@ begin
       if params.Values['server'] <> '' then
         Info.Server:=params.Values['server']
       else
-        Info.Server:=ini.ReadString('database','server','');
+        Info.Server:=ini.ReadString('database','server','localhost');
 
       if params.Values['alias'] <> '' then
         Info.Alias:=params.Values['alias']
       else
-        Info.Alias:=ini.ReadString('database','alias','');
+        Info.Alias:=ini.ReadString('database','alias','citk');
 
       if params.Values['ConnectorType'] <> '' then
         Info.ConnectorType:=params.Values['ConnectorType']
@@ -176,15 +229,15 @@ begin
       ini.WriteString('database','dbapwd',Encrypt(Info.Key, 'scraps'));
     Info.DBAPwd:=ini.ReadString('database','dbapwd', Info.Crypter.Encrypt('masterkey'));
 
-    { zeos }
-    //if not ini.ValueExists('database','protocol') then
-    //  ini.WriteString('database','protocol','firebird-3.0');
-    //Info.Protocol:=ini.ReadString('database','protocol','firebird-3.0');
-
     if not ini.ValueExists('database','connector type') then
       ini.WriteString('database','connector type','Firebird');
     Info.ConnectorType:=ini.ReadString('database','connector type','Firebird');
 
+    if not ini.ValueExists('database','server') then
+      ini.WriteString('database','server',Info.Server);
+
+    if not ini.ValueExists('database','Alias') then
+      ini.WriteString('database','Alias',Info.Alias);
 
   finally
     ini.Free;

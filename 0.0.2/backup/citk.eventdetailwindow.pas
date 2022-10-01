@@ -53,9 +53,6 @@ type
     property EventStartDate: TDateTime read FEventStartDate write SetEventStartDate;
   end;
 
-var
-  EventDetailW: TEventDetailW;
-
 implementation
 
 {$R *.lfm}

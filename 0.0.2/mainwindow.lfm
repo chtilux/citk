@@ -1,7 +1,7 @@
 object MainW: TMainW
-  Left = 655
+  Left = 2134
   Height = 480
-  Top = 214
+  Top = 476
   Width = 780
   Caption = 'Céline in the Kitchen'
   ClientHeight = 460

@@ -37,9 +37,6 @@ type
 
   procedure DisplayCustomers;
 
-var
-  CustomersW: TCustomersW;
-
 implementation
 
 {$R *.lfm}
@@ -135,6 +132,7 @@ procedure TCustomersW.QueryAfterPost(Dataset: TDataset);
 begin
   Query.ApplyUpdates;
   DataObject.Transaction.CommitRetaining;
+  Info.Log('Customer ' + Dataset.FieldByname('custname').AsString + ' : Post.');
   Query.Refresh;
 end;
 

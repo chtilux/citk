@@ -156,7 +156,7 @@ begin
 
     i := 0;
     repeat
-      Filename := Format('c:\temp\bill_%.4d_%.6d.pdf',[YearOf(Today),master.FieldByName('numbill').AsInteger]);
+      Filename := Format('%s\bill_%.4d_%.6d.pdf',[ExcludeTrailingPathDelimiter(OutputDirectory),YearOf(Today),master.FieldByName('numbill').AsInteger]);
       Inc(i);
     until not(FileExists(Filename));
 

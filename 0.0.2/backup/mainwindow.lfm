@@ -39644,6 +39644,7 @@ object MainW: TMainW
       Caption = 'Daily recap...'
       ImageIndex = 7
       OnExecute = DelayRecapActionExecute
+      ShortCut = 16452
     end
   end
 end

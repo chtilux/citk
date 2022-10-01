@@ -12,7 +12,7 @@ function Login(Info: TInfo): boolean;
 implementation
 
 uses
-  Controls, citk.firebird, citk.persistence, citk.User,
+  Controls, citk.firebird, citk.User,
   IBConnection, citk.database, citk.dictionary;
 
 procedure DoBeforeLogin(Info: TInfo);

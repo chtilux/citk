@@ -13,6 +13,7 @@ type
     function GetSQL: string;
     function GetPKSQL: string;
     function GetProductsSQL: string;
+    function GetNotSelectedProductsSQL: string;
   end;
 
   { TEventDetail }
@@ -22,6 +23,7 @@ type
     function GetSQL: string;
     function GetPKSQL: string;
     function GetProductsSQL: string;
+    function GetNotSelectedProductsSQL: string;
   end;
 
 implementation
@@ -51,6 +53,21 @@ begin
            +'       (SELECT MAX(x.dateff) FROM prices x'
            +'          WHERE x.serprd = px.serprd'
            +'            AND x.dateff <= :dateff)'
+           +' ORDER BY p.libprd';
+end;
+
+function TEventDetail.GetNotSelectedProductsSQL: string;
+begin
+  Result := 'SELECT p.serprd,p.libprd,px.price'
+           +' FROM products p LEFT JOIN prices px ON p.serprd = px.serprd'
+           +' WHERE px.ptype = ''S'''
+           +'   AND p.active = True'
+           +'   AND px.dateff = '
+           +'       (SELECT MAX(x.dateff) FROM prices x'
+           +'          WHERE x.serprd = px.serprd'
+           +'            AND x.dateff <= :dateff)'
+           +'   AND p.serprd NOT IN (SELECT z.serprd FROM event_detail z'
+           +'                          WHERE z.serevt = :serevt)'
            +' ORDER BY p.libprd';
 end;
 

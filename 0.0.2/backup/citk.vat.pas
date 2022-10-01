@@ -14,6 +14,7 @@ type
   IVAT = Interface
   ['{B0A5A0DA-3327-447A-8E87-9054D0F35ED3}']
     function GetSQL: string;
+    function GetRateSQL: string;
   end;
 
   { TVAT }
@@ -21,6 +22,7 @@ type
   TVAT = class(TInterfacedObject, IVAT)
   public
     function GetSQL: string;
+    function GetRateSQL: string;
   end;
 
   procedure DisplayVAT;
@@ -74,6 +76,13 @@ end;
 function TVAT.GetSQL: string;
 begin
   Result := 'SELECT codtva, libtva FROM tva ORDER BY 1';
+end;
+
+function TVAT.GetRateSQL: string;
+begin
+  Result := 'SELECT codtva,dateff,rate FROM tautva'
+           +' WHERE codtva = :codtva'
+           +' ORDER BY dateff DESC';
 end;
 
 { TVATColumns }

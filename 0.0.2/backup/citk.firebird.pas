@@ -26,7 +26,7 @@ function FBTableColumnExists(const TableName, Column: string): boolean;
 function FBDomainExists(const Domain: string): boolean;
 function FBConstraintExists(const Name: string; out relation_name: string): boolean;
 function FBTableIndexExists(const Name, TableName: string): boolean;
-function FBSequenceExists(const Name: string): boolean;
+function FBSequenceExists(const SequenceName: string): boolean;
 
 implementation
 
@@ -284,7 +284,7 @@ begin
   end;
 end;
 
-function FBSequenceExists(const Name: string): boolean;
+function FBSequenceExists(const SequenceName: string): boolean;
 begin
   with TSQLQuery.Create(nil) do
   begin
@@ -292,7 +292,7 @@ begin
       SQLConnection:=Cnx;
       Transaction:=Trx;
       SQL.Add('SELECT COUNT(*) FROM rdb$generators'
-             +' WHERE UPPER(rdb$generator_name)= '+Name.ToUpper.QuotedString);
+             +' WHERE UPPER(rdb$generator_name)= '+SequenceName.ToUpper.QuotedString);
       Log(SQL.Text);
       Open;
       Result:=Fields[0].AsInteger=1;

@@ -64,6 +64,7 @@ end;
 
 procedure TVATW.RateAfterPost(Dataset: TDataset);
 begin
+  TSQLQuery(Dataset).ApplyUpdates;
   DataObject.Transaction.CommitRetaining;
 end;
 

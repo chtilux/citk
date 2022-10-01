@@ -208,7 +208,6 @@ var
   master,
   detail,
   vat: TSQLQuery;
-  output: IOutput;
 begin
   detail := nil; vat := nil;
   master := FDataObject.GetQuery;

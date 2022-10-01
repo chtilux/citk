@@ -74,7 +74,7 @@ implementation
 uses
   citk.dictionary, citk.DataObject, citk.customers, Windows, citk.Output,
   citk.events, citk.products, citk.bill, SQLDB, DateUtils, citk.PDFOutput,
-  WinApi;
+  ShellApi;
 
 procedure Billing(Info: TInfo; const serevt: integer);
 var

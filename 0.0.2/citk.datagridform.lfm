@@ -6,6 +6,7 @@ object DataGridForm: TDataGridForm
   Caption = 'DataGridForm'
   ClientHeight = 507
   ClientWidth = 709
+  Color = 13095133
   OnClose = FormClose
   OnShow = FormShow
   LCLVersion = '2.2.2.0'
@@ -15,6 +16,8 @@ object DataGridForm: TDataGridForm
     Top = 0
     Width = 709
     Align = alTop
+    Color = 7641027
+    ParentColor = False
     TabOrder = 0
   end
   object BottomPanel: TPanel
@@ -23,6 +26,8 @@ object DataGridForm: TDataGridForm
     Top = 457
     Width = 709
     Align = alBottom
+    Color = 10460100
+    ParentColor = False
     TabOrder = 1
   end
   object WorkingSpacePanel: TPanel

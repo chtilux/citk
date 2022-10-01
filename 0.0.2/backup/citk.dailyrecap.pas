@@ -388,11 +388,12 @@ begin
     page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX           RESTAURATEUR Autorisation XXXXXXXXX');
 
     DecodeDate(mst.DueDate,y,m,d);
-    i := 0;
-    repeat
-      Filename := Format('%s\daily_recap_%.4d%.2d%.2d_%.3d.pdf',[ExcludeTrailingPathDelimiter(OutputDirectory),y,m,d,i]);
-      Inc(i);
-    until not(FileExists(Filename));
+    Filename := Format('%s\daily_recap_%.4d%.2d%.2d.pdf',[ExcludeTrailingPathDelimiter(OutputDirectory),y,m,d]);
+    //i := 0;
+    //repeat
+    //  Filename := Format('%s\daily_recap_%.4d%.2d%.2d_%.3d.pdf',[ExcludeTrailingPathDelimiter(OutputDirectory),y,m,d,i]);
+    //  Inc(i);
+    //until not(FileExists(Filename));
 
     fs := TFileStream.Create(Filename,fmCreate);
     try

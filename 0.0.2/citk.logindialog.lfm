@@ -100,13 +100,14 @@ object LoginW: TLoginW
       Top = 36
       Width = 191
       ButtonWidth = 23
+      CharCase = ecUppercase
       MaxLength = 30
       NumGlyphs = 1
       OnButtonClick = UserNameEditButtonClick
       OnKeyDown = UserNameEditKeyDown
       PasswordChar = #0
       TabOrder = 1
-      Text = 'UserNameEdit'
+      Text = 'USERNAMEEDIT'
     end
     object Label3: TLabel
       Left = 43

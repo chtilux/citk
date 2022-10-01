@@ -31,7 +31,10 @@ type
 implementation
 
 uses
-  citk.DailyRecap, SQLDB, citk.DataObject, citk.Output, citk.dictionary;
+  citk.DailyRecap, SQLDB, citk.DataObject, citk.Output, citk.dictionary,
+  ShellApi;
+
+{$R *.lfm}
 
 procedure DisplayDailyRecap(Info: TInfo);
 var
@@ -55,11 +58,6 @@ begin
     Q.Free;
   end;
 end;
-
-{$R *.lfm}
-
-uses
-  ShellApi;
 
 { TDailyRecapW }
 
