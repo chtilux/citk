@@ -56,6 +56,7 @@ type
   { TBillingW }
 
   TBillingW = class(TForm)
+    BillMeButton: TButton;
     DisplayBillCheckBox: TCheckBox;
     PrintBillCheckbox: TCheckBox;
     CustomerName: TEdit;
@@ -74,6 +75,7 @@ type
     Products: TStringGrid;
     VatLabel: TLabel;
     HTVLabel: TLabel;
+    procedure BillMeButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -137,6 +139,7 @@ procedure TBillingW.IDEditExit(Sender: TObject);
 var
   cust: ICustomers;
   id: integer;
+  cName: string;
 begin
   FDefaultCustomer := string(TEdit(Sender).Text).Trim.IsEmpty;
   if not DefaultCustomer then
@@ -144,10 +147,39 @@ begin
     cust := TCustomers.Create(TFirebirdDataObject.Create(glGlobalInfo.Cnx, glGlobalInfo.Transaction));
     { id }
     if TryStrToInt(IDEdit.Text, id) then
-      CustomerName.Text:=cust.GetCustomerName(id)
+    begin
+      try
+        CustomerName.Text:=cust.GetCustomerName(id);
+      except
+        on E:ECustomers do
+        begin
+          TEdit(Sender).Text:=IntToStr(FDefaultCustomerID);
+          MessageDlg(E.Message + #13#10 + 'Default customer used !', mtWarning, [mbOk], 0);
+        end
+        else
+          raise;
+      end;
+    end
     else
     begin
-      CustomerName.Text:=cust.GetCustomerName(IDEdit.Text);
+      try
+        IDEdit.Text:=cust.GetCustomerName(IDEdit.Text);
+        IDEditExit(Sender);
+      except
+        on E:ECustomers do
+        begin
+          TEdit(Sender).Text:=IntToStr(FDefaultCustomerID);
+          CName:=InputBox('New customer', 'Do you want to create a new customer (let blank if not, otherwise type customer name) ?', '').Trim.ToUpper;
+          if not CName.IsEmpty then
+          begin
+            IDEdit.Text:=IntToStr(cust.CreateNewCustomer(CName));
+            IDEditExit(Sender);
+          end;
+        end
+        else
+          raise;
+      end;
+      //CustomerName.Text:=cust.GetCustomerName(IDEdit.Text);
     end;
   end
   else
@@ -240,6 +272,11 @@ begin
   DisplayBillCheckBox.Checked:=dic.GetDisplayBillOption;
   LoadBillOfTheDay;
   readFormPos(Self, nil);
+end;
+
+procedure TBillingW.BillMeButtonClick(Sender: TObject);
+begin
+  ConfirmBill;
 end;
 
 procedure TBillingW.FormDestroy(Sender: TObject);

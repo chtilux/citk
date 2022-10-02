@@ -1,7 +1,7 @@
 object MainW: TMainW
-  Left = 2134
+  Left = 455
   Height = 480
-  Top = 476
+  Top = 322
   Width = 780
   Caption = 'Céline in the Kitchen'
   ClientHeight = 460
@@ -40,8 +40,8 @@ object MainW: TMainW
   end
   object Logo: TImage
     Left = 0
-    Height = 437
-    Top = 0
+    Height = 413
+    Top = 24
     Width = 780
     Align = alClient
     Center = True
@@ -39553,6 +39553,73 @@ object MainW: TMainW
     }
     Proportional = True
   end
+  object ToolBar1: TToolBar
+    Left = 0
+    Height = 24
+    Top = 0
+    Width = 780
+    AutoSize = True
+    Caption = 'ToolBar1'
+    ChildSizing.LeftRightSpacing = 5
+    ChildSizing.TopBottomSpacing = 5
+    ChildSizing.HorizontalSpacing = 5
+    ChildSizing.VerticalSpacing = 5
+    ChildSizing.ControlsPerLine = 1
+    Images = citkDataModule.citk16ImageList
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+    object ToolButton1: TToolButton
+      Left = 1
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton1'
+      Style = tbsSeparator
+    end
+    object ToolButton2: TToolButton
+      Left = 9
+      Top = 2
+      Action = EventsAction
+    end
+    object ToolButton3: TToolButton
+      Left = 55
+      Top = 2
+      Action = ProductsAction
+    end
+    object ToolButton4: TToolButton
+      Left = 78
+      Top = 2
+      Action = CustomersAction
+    end
+    object ToolButton5: TToolButton
+      Left = 101
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton5'
+      Style = tbsSeparator
+    end
+    object ToolButton6: TToolButton
+      Left = 109
+      Top = 2
+      Action = VATAction
+    end
+    object ToolButton7: TToolButton
+      Left = 132
+      Top = 2
+      Action = UsersAction
+    end
+    object ToolButton8: TToolButton
+      Left = 155
+      Top = 2
+      Action = ApplicationDictionaryAction
+      AutoSize = True
+    end
+    object ToolButton9: TToolButton
+      Left = 32
+      Top = 2
+      Action = DailyRecapAction
+    end
+  end
   object citkMainMenu: TMainMenu
     Images = citkDataModule.citk16ImageList
     Left = 56
@@ -39581,7 +39648,7 @@ object MainW: TMainW
         Action = VATAction
       end
       object MenuItem3: TMenuItem
-        Action = DelayRecapAction
+        Action = DailyRecapAction
       end
       object Separator2: TMenuItem
         Caption = '-'
@@ -39598,12 +39665,14 @@ object MainW: TMainW
     object ApplicationDictionaryAction: TAction
       Category = 'Application'
       Caption = 'Application Dictionary...'
+      Hint = 'Dictionary'
       ImageIndex = 3
       OnExecute = ApplicationDictionaryActionExecute
     end
     object CustomersAction: TAction
       Category = 'Customers'
       Caption = 'Customers...'
+      Hint = 'Customers'
       ImageIndex = 0
       OnExecute = CustomersActionExecute
       ShortCut = 16469
@@ -39611,6 +39680,7 @@ object MainW: TMainW
     object ProductsAction: TAction
       Category = 'Products'
       Caption = 'Products...'
+      Hint = 'Products'
       ImageIndex = 1
       OnExecute = ProductsActionExecute
       ShortCut = 16464
@@ -39618,17 +39688,21 @@ object MainW: TMainW
     object QuitApplicationAction: TAction
       Category = 'Application'
       Caption = 'Quit Application'
+      Hint = 'Quit application'
       ImageIndex = 4
       OnExecute = QuitApplicationActionExecute
     end
     object UsersAction: TAction
       Category = 'Application'
       Caption = 'Users...'
+      Hint = 'Users'
       ImageIndex = 2
+      OnExecute = UsersActionExecute
     end
     object EventsAction: TAction
       Category = 'Events'
       Caption = 'Events'
+      Hint = 'Events'
       ImageIndex = 5
       OnExecute = EventsActionExecute
       ShortCut = 16453
@@ -39636,14 +39710,16 @@ object MainW: TMainW
     object VATAction: TAction
       Category = 'Application'
       Caption = 'VAT...'
+      Hint = 'VAT'
       ImageIndex = 6
       OnExecute = VATActionExecute
     end
-    object DelayRecapAction: TAction
+    object DailyRecapAction: TAction
       Category = 'Events'
       Caption = 'Daily recap...'
+      Hint = 'Daily recap'
       ImageIndex = 7
-      OnExecute = DelayRecapActionExecute
+      OnExecute = DailyRecapActionExecute
       ShortCut = 16452
     end
   end

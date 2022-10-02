@@ -173,7 +173,7 @@ begin
 
     Inc(top, 20);
     Page.SetFont(FontBold,10);
-    page.WriteText(10, top, Format('TOTAL : %.2f',[total]));
+    page.WriteText(10, top, Format('TOTAL : %.2f (%s)',[total, master.FieldByName('paymentmethod').AsString]));
 
     Inc(top, 20);
     page.WriteText(10,top,'VAT');
@@ -192,7 +192,7 @@ begin
     page.SetFont(fontBold,8);
     page.WriteText(10, top, 'CELINE IN THE KITCHEN, DIFFERDANGE');
     Inc(top,5);
-    page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX           RESTAURATEUR Autorisation XXXXXXXXX');
+    page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX    TVA : LU34239512       RESTAURATEUR Autorisation 10144080/0');
 
     //GenerateText(page, 'Celine in the Kitchen');
     //page.WriteText(10,top,'Celine in the Kitchen');

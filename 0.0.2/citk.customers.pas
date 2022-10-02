@@ -58,6 +58,8 @@ type
     function GetPKSQL: string;
     function GetCustomerName(const ID: integer): string;
     function GetCustomerName(const ANamePart: string): string;
+    function GetCustomerID(const ANamePart: string): string;
+    function CreateNewCustomer(const CName: string): integer;
   end;
 
   { TCustomers }
@@ -72,12 +74,14 @@ type
     function GetPKSQL: string;
     function GetCustomerName(const ID: integer): string; overload;
     function GetCustomerName(const ANamePart: string): string; overload;
+    function GetCustomerID(const ANamePart: string): string;
+    function CreateNewCustomer(const CName: string): integer;
   end;
 
 implementation
 
 uses
-  SQLDB;
+  SQLDB, Forms, Controls, Buttons, DBGrids, DB;
 
 { TCustomers }
 
@@ -124,20 +128,140 @@ begin
 end;
 
 function TCustomers.GetCustomerName(const ANamePart: string): string;
+var
+  Q: TSQLQuery;
+  F: TForm;
+  ctl: TWinControl;
+  ds: TDataSource;
 begin
-  with FDataObject.GetQuery do
+  Result := 'More than one. Refine typing';
+  Q := FDataObject.GetQuery;
+  with Q do
   begin
     try
-      SQL.Add('SELECT FIRST 1 custname FROM customers WHERE custname like :APart');
+      SQL.Add('SELECT custname FROM customers WHERE custname like :APart'
+             +' ORDER BY 1');
       Params[0].AsString:='%'+ANamePart+'%';
       Open;
+      Last;
+      First;
       if not Eof then
-        Result := Fields[0].AsString
+      begin
+        if RecordCount = 1 then
+          Result := Fields[0].AsString
+        else
+        begin
+          F := TForm.Create(nil);
+          try
+            F.Position:=poScreenCenter;
+
+            ctl := TBitBtn.Create(F);
+            ctl.Parent := F;
+            ctl.Align:=alBottom;
+            TBitBtn(ctl).Kind:=bkOK;
+
+            ds := TDatasource.Create(F);
+            ds.DataSet:=Q;
+            ds.AutoEdit:=False;
+
+            ctl := TDBGrid.Create(nil);
+            ctl.Parent:=F;
+            ctl.Align:=alClient;
+            TDBGrid(ctl).DataSource:=ds;
+            TDBGrid(ctl).ReadOnly:=True;
+
+            if F.ShowModal = mrOK then
+              Result := GetCustomerID(Fields[0].AsString);
+          finally
+            F.Free;
+          end;
+        end;
+      end
       else
         raise ECustomers.CreateFmt('Customer %s does not exists !', [ANamePart]);
     finally
       Free;
     end
+  end;
+end;
+
+function TCustomers.GetCustomerID(const ANamePart: string): string;
+var
+  Q: TSQLQuery;
+  F: TForm;
+  ctl: TWinControl;
+  ds: TDataSource;
+begin
+  Result := 'More than one. Refine typing';
+  Q := FDataObject.GetQuery;
+  with Q do
+  begin
+    try
+      SQL.Add('SELECT sercust FROM customers WHERE custname like :APart'
+             +' ORDER BY 1');
+      Params[0].AsString:='%'+ANamePart+'%';
+      Open;
+      Last;
+      First;
+      if not Eof then
+      begin
+        if RecordCount = 1 then
+          Result := Fields[0].AsString
+        else
+        begin
+          F := TForm.Create(nil);
+          try
+            F.Position:=poScreenCenter;
+
+            ctl := TBitBtn.Create(F);
+            ctl.Parent := F;
+            ctl.Align:=alBottom;
+            TBitBtn(ctl).Kind:=bkOK;
+
+            ds := TDatasource.Create(F);
+            ds.DataSet:=Q;
+            ds.AutoEdit:=False;
+
+            ctl := TDBGrid.Create(nil);
+            ctl.Parent:=F;
+            ctl.Align:=alClient;
+            TDBGrid(ctl).DataSource:=ds;
+            TDBGrid(ctl).ReadOnly:=True;
+
+            if F.ShowModal = mrOK then
+              Result := GetCustomerID(Fields[0].AsString);
+          finally
+            F.Free;
+          end;
+        end;
+      end
+      else
+        raise ECustomers.CreateFmt('Customer %s does not exists !', [ANamePart]);
+    finally
+      Free;
+    end
+  end;
+end;
+
+function TCustomers.CreateNewCustomer(const CName: string): integer;
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add(GetPKSQL);
+      Open;
+      Result := Fields[0].AsInteger;
+      Close;
+      SQL.Clear;
+      SQL.Add('INSERT INTO customers (sercust,custname)'
+             +' VALUES (:sercust, :custname)');
+      Params[0].AsInteger:=Result;
+      Params[1].AsString:=CName;
+      ExecSQL;
+      FDataObject.Transaction.CommitRetaining;
+    finally
+      Free;
+    end;
   end;
 end;
 

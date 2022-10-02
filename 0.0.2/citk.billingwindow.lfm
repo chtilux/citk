@@ -1,7 +1,7 @@
 object BillingW: TBillingW
-  Left = 427
+  Left = 428
   Height = 626
-  Top = 262
+  Top = 263
   Width = 976
   Align = alClient
   Caption = 'Billing event'
@@ -218,6 +218,15 @@ object BillingW: TBillingW
           Width = 77
           Caption = 'Display bill'
           TabOrder = 2
+        end
+        object BillMeButton: TButton
+          Left = 8
+          Height = 25
+          Top = 8
+          Width = 75
+          Caption = 'Bill me'
+          OnClick = BillMeButtonClick
+          TabOrder = 3
         end
       end
     end

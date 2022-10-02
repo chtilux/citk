@@ -1,7 +1,7 @@
 inherited ProductW: TProductW
-  Left = 454
+  Left = 455
   Height = 585
-  Top = 211
+  Top = 212
   Width = 746
   Caption = 'Products'
   ClientHeight = 585

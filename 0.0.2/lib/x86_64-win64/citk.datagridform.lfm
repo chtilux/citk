@@ -1,7 +1,7 @@
 object DataGridForm: TDataGridForm
-  Left = 606
+  Left = 607
   Height = 507
-  Top = 287
+  Top = 288
   Width = 709
   Caption = 'DataGridForm'
   ClientHeight = 507

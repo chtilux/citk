@@ -55,9 +55,19 @@ type
   { TMainW }
 
   TMainW = class(TForm)
-    DelayRecapAction: TAction;
+    DailyRecapAction: TAction;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    ToolButton9: TToolButton;
     VATAction: TAction;
     EventsAction: TAction;
     MenuItem1: TMenuItem;
@@ -80,13 +90,14 @@ type
     SB: TStatusBar;
     procedure ApplicationDictionaryActionExecute(Sender: TObject);
     procedure CustomersActionExecute(Sender: TObject);
-    procedure DelayRecapActionExecute(Sender: TObject);
+    procedure DailyRecapActionExecute(Sender: TObject);
     procedure EventsActionExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ProductsActionExecute(Sender: TObject);
     procedure QuitApplicationActionExecute(Sender: TObject);
+    procedure UsersActionExecute(Sender: TObject);
     procedure VATActionExecute(Sender: TObject);
   private
     FInfo: TInfo;
@@ -96,6 +107,7 @@ type
     procedure DisplayEvents;
     procedure DisplayVAT;
     procedure DisplayDailyRecap;
+    procedure DisplayUsers;
     procedure SetInfo(AValue: TInfo);
   public
     property Info: TInfo read FInfo write SetInfo;
@@ -110,7 +122,8 @@ implementation
 
 uses
   citk.utils, citk.dictionary, citk.ProductWindow, citk.customersWindow,
-  citk.EventsWindow, citk.vat, citk.DailyRecapWindow;
+  citk.EventsWindow, citk.vat, citk.DailyRecapWindow, Chtilux.Utils,
+  citk.Users;
 
 { TMainW }
 
@@ -127,6 +140,11 @@ end;
 procedure TMainW.QuitApplicationActionExecute(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TMainW.UsersActionExecute(Sender: TObject);
+begin
+  DisplayUsers;
 end;
 
 procedure TMainW.VATActionExecute(Sender: TObject);
@@ -165,7 +183,7 @@ begin
   DisplayCustomers;
 end;
 
-procedure TMainW.DelayRecapActionExecute(Sender: TObject);
+procedure TMainW.DailyRecapActionExecute(Sender: TObject);
 begin
   DisplayDailyRecap;
 end;
@@ -209,6 +227,12 @@ procedure TMainW.DisplayDailyRecap;
 begin
   glGlobalInfo.Log('DisplayDailyRecap');
   citk.DailyRecapWindow.DisplayDailyRecap(glGlobalInfo);
+end;
+
+procedure TMainW.DisplayUsers;
+begin
+  glGlobalInfo.Log('DisplayUsers');
+  citk.Users.DisplayUsers;
 end;
 
 end.

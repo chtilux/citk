@@ -226,7 +226,7 @@ begin
     Info.DBA:=ini.ReadString('database','dba','SYSDBA');
 
     if not ini.ValueExists('database','dbapwd') then
-      ini.WriteString('database','dbapwd',Encrypt(Info.Key, 'scraps'));
+      ini.WriteString('database','dbapwd',Encrypt(Info.Key, 'masterkey'));
     Info.DBAPwd:=ini.ReadString('database','dbapwd', Info.Crypter.Encrypt('masterkey'));
 
     if not ini.ValueExists('database','connector type') then

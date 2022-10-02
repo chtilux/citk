@@ -346,6 +346,7 @@ begin
       ParamByName('coddic').AsString:='PrintBill';
       ParamByName('libdic').AsString:='Bill is printed when pardc1=1';
       ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
+      ExecSQL;
     finally
       Free;
     end;
@@ -363,6 +364,7 @@ begin
       ParamByName('coddic').AsString:='DisplayBill';
       ParamByName('libdic').AsString:='PDF Bill is displayed when pardc1=1';
       ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
+      ExecSQL;
     finally
       Free;
     end;

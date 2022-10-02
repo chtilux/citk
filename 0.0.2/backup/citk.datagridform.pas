@@ -68,6 +68,8 @@ type
     BottomPanel: TPanel;
     WorkingSpacePanel: TPanel;
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     FDataObject: IDataObject;
@@ -97,6 +99,9 @@ type
 
 implementation
 
+uses
+  Chtilux.Utils;
+
 {$R *.lfm}
 
 { TSetDataGridColumnsHelper }
@@ -104,7 +109,26 @@ implementation
 procedure TSetDataGridColumnsHelper.SetOnSetDataGridColumns(
   ADBGrid: TDBGrid);
 begin
-
+  with ADBGrid.Columns.Add do
+  begin
+    FieldName:='login';
+    Width := 150;
+  end;
+  with ADBGrid.Columns.Add do
+  begin
+    FieldName:='user_name';
+    Width := 200;
+  end;
+  with ADBGrid.Columns.Add do
+  begin
+    FieldName:='active';
+    Width := 150;
+  end;
+  with ADBGrid.Columns.Add do
+  begin
+    FieldName:='password';
+    Width := 150;
+  end;
 end;
 
 { TDataGridForm }
@@ -127,6 +151,16 @@ procedure TDataGridForm.FormClose(Sender: TObject; var CloseAction: TCloseAction
   );
 begin
   SaveContent;
+end;
+
+procedure TDataGridForm.FormCreate(Sender: TObject);
+begin
+  readFormPos(Self, nil);
+end;
+
+procedure TDataGridForm.FormDestroy(Sender: TObject);
+begin
+  writeFormPos(Self, nil);
 end;
 
 procedure TDataGridForm.FormShow(Sender: TObject);

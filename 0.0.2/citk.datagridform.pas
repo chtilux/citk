@@ -109,7 +109,6 @@ uses
 procedure TSetDataGridColumnsHelper.SetOnSetDataGridColumns(
   ADBGrid: TDBGrid);
 begin
-
 end;
 
 { TDataGridForm }

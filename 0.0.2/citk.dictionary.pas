@@ -66,6 +66,7 @@ type
     function GetDisplayBillOption: boolean;
     procedure SetPrintBillOption(const Value: boolean);
     procedure SetDisplayBillOption(const Value: boolean);
+    function GetPublicKey: string;
   end;
 
   { TDictionary }
@@ -87,6 +88,7 @@ type
     function GetDisplayBillOption: boolean;
     procedure SetPrintBillOption(const Value: boolean);
     procedure SetDisplayBillOption(const Value: boolean);
+    function GetPublicKey: string;
   end;
 
   procedure DisplayDictionary;
@@ -365,6 +367,22 @@ begin
       ParamByName('libdic').AsString:='PDF Bill is displayed when pardc1=1';
       ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
       ExecSQL;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TDictionary.GetPublicKey: string;
+begin
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add('SELECT pardc1 FROM dictionnaire'
+             +' WHERE cledic = ''security'''
+             +'   AND coddic = ''public key''');
+      Open;
+      Result := Fields[0].AsString;
     finally
       Free;
     end;

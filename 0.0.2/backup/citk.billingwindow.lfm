@@ -1,7 +1,7 @@
 object BillingW: TBillingW
-  Left = 427
+  Left = 428
   Height = 626
-  Top = 262
+  Top = 263
   Width = 976
   Align = alClient
   Caption = 'Billing event'
@@ -58,7 +58,7 @@ object BillingW: TBillingW
         Left = 328
         Height = 23
         Top = 14
-        Width = 599
+        Width = 612
         Anchors = [akTop, akLeft, akRight]
         CharCase = ecUppercase
         TabStop = False
