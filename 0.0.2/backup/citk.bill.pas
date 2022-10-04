@@ -70,7 +70,8 @@ type
     FDataObject: IDataObject;
     function GetPKSQL: string;
   public
-    constructor Create(DataObject: IDataObject);
+    constructor Create; overload;
+    constructor Create(DataObject: IDataObject); overload;
     function GetPK: integer;
     function GetBillNumber: integer;
     function GetInsertBillSQL: string;
@@ -155,9 +156,15 @@ begin
   Result := 'SELECT GEN_ID(seq_bill,1) FROM rdb$database';
 end;
 
+constructor TBills.Create;
+begin
+
+end;
+
 constructor TBills.Create(DataObject: IDataObject);
 begin
   FDataObject := DataObject;
+  Create;
 end;
 
 function TBills.GetPK: integer;
@@ -281,7 +288,7 @@ begin
     detail.Open;
     vat.Open;
 
-    OutputMode.Print(master, detail, vat);
+    OutputMode.Print(master, detail, vat, TDictionary.Create(FDataObject));
   finally
     master.Free;
     detail.Free;

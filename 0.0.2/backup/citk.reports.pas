@@ -1,4 +1,4 @@
-unit citk.Output;
+unit citk.Reports;
 (*
     This file is part of citk.
 
@@ -48,21 +48,26 @@ unit citk.Output;
 interface
 
 uses
-  Classes, SysUtils, SQLDB, citk.dictionary;
+  Classes, SysUtils;
 
-type
-  IOutput = interface
-  ['{C5D33B4A-7555-4AF3-9405-51DB6EC1181E}']
-    procedure Print(master, detail, vat: TSQLQuery);
-    function GetOutputDirectory: TFilename;
-    procedure SetOutputDirectory(const AValue: TFilename);
-    property OutputDirectory: TFilename read GetOutputDirectory write SetOutputDirectory;
-    function GetDictionary: IDictionary;
-    procedure SetDictionary(const Value: IDictionary);
-    property Dic: IDictionary read GetDictionary write setDictionary;
-  end;
+  procedure DisplayReports;
 
 implementation
+
+uses
+  citk.ReportsWindow;
+
+procedure DisplayReports;
+var
+  rw: TReportsW;
+begin
+  rw := TReportsW.Create(nil);
+  try
+    rw.ShowModal;
+  finally
+    rw.Free;
+  end;
+end;
 
 end.
 

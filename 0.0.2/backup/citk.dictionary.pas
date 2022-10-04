@@ -66,6 +66,10 @@ type
     function GetDisplayBillOption: boolean;
     procedure SetPrintBillOption(const Value: boolean);
     procedure SetDisplayBillOption(const Value: boolean);
+    function GetPublicKey: string;
+    function GetRCS: string;
+    function GetVatNumber: string;
+    function GetPersonalNumber: string;
   end;
 
   { TDictionary }
@@ -73,6 +77,10 @@ type
   TDictionary = class(TInterfacedObject, IDictionary)
   private
     FDataObject: IDataObject;
+    function GetParDic(const cledic, coddic, pardic, defaultValue: string
+      ): string; overload;
+    function GetParDic(const cledic, coddic: string;
+      const ParameterNumber: word; const defaultValue: string): string; overload;
   public
     constructor Create(DataObject: IDataObject); virtual; overload;
     constructor Create; overload;
@@ -87,6 +95,10 @@ type
     function GetDisplayBillOption: boolean;
     procedure SetPrintBillOption(const Value: boolean);
     procedure SetDisplayBillOption(const Value: boolean);
+    function GetPublicKey: string;
+    function GetRCS: string;
+    function GetVatNumber: string;
+    function GetPersonalNumber: string;
   end;
 
   procedure DisplayDictionary;
@@ -278,61 +290,19 @@ end;
 
 function TDictionary.GetOutputDirectory: TFilename;
 begin
-  with FDataObject.GetQuery do
-  begin
-    try
-      SQL.Add('SELECT pardc1 FROM dictionnaire'
-             +' WHERE cledic = ''output'''
-             +'   AND coddic = ''directory''');
-      Open;
-      if not Eof then
-        Result := Fields[0].AsString
-      else
-        Result := 'c:\temp';
-      if not DirectoryExists(Result) then
-         ForceDirectories(Result);
-    finally
-      Free;
-    end;
-  end;
+  Result := GetPardic('output','directory',1,'c:\temp');
+  if not DirectoryExists(Result) then
+     ForceDirectories(Result);
 end;
 
 function TDictionary.GetPrintBillOption: boolean;
 begin
-  Result := True;
-  with FDataObject.GetQuery do
-  begin
-    try
-      SQL.Add('SELECT COALESCE(pardc1,''1'') FROM dictionnaire'
-             +' WHERE cledic = ''sales'''
-             +'   AND coddic = ''PrintBill''');
-      Open;
-      if not Eof then
-        Result := Fields[0].AsString = '1';
-      Close;
-    finally
-      Free;
-    end;
-  end;
+  Result := GetParDic('sales','PrintBill',1,'1') = '1';
 end;
 
 function TDictionary.GetDisplayBillOption: boolean;
 begin
-  Result := True;
-  with FDataObject.GetQuery do
-  begin
-    try
-      SQL.Add('SELECT COALESCE(pardc1,''1'') FROM dictionnaire'
-             +' WHERE cledic = ''sales'''
-             +'   AND coddic = ''DisplayBill''');
-      Open;
-      if not Eof then
-        Result := Fields[0].AsString = '1';
-      Close;
-    finally
-      Free;
-    end;
-  end;
+  Result := GetParDic('sales','DisplayBill',1,'1') = '1';
 end;
 
 procedure TDictionary.SetPrintBillOption(const Value: boolean);
@@ -365,6 +335,51 @@ begin
       ParamByName('libdic').AsString:='PDF Bill is displayed when pardc1=1';
       ParamByName('pardc1').AsString:=BoolToStr(Value,'1','0');
       ExecSQL;
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TDictionary.GetPublicKey: string;
+begin
+  Result := GetParDic('security','public key',1,'');
+end;
+
+function TDictionary.GetRCS: string;
+begin
+  Result := GetParDic('MentionsLegales','RCS',1,'XXXXXX');
+end;
+
+function TDictionary.GetVatNumber: string;
+begin
+  Result := GetParDic('MentionsLegales','VAT',1,'XXXXXX');
+end;
+
+function TDictionary.GetPersonalNumber: string;
+begin
+  Result := GetParDic('MentionsLegales','Autorisation',1,'XXXXXX');
+end;
+
+function TDictionary.GetParDic(const cledic, coddic: string; const ParameterNumber: word; const defaultValue: string): string;
+begin
+  Result := GetParDic(cledic,coddic,Format('pardc%d',[ParameterNumber]),defaultValue);
+end;
+
+function TDictionary.GetParDic(const cledic, coddic, pardic, defaultValue: string): string;
+begin
+  Result := defaultValue;
+  with FDataObject.GetQuery do
+  begin
+    try
+      SQL.Add(Format('SELECT %s FROM dictionnaire',[pardic])
+             +' WHERE cledic = :cledic'
+             +'   AND coddic = :coddic');
+      ParamByName('cledic').AsString:=cledic;
+      ParamByName('coddic').AsString:=coddic;
+      Open;
+      if not Eof then
+        Result := Fields[0].AsString;
     finally
       Free;
     end;

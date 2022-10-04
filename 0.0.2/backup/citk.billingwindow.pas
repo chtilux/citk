@@ -56,6 +56,7 @@ type
   { TBillingW }
 
   TBillingW = class(TForm)
+    BillMeButton: TButton;
     DisplayBillCheckBox: TCheckBox;
     PrintBillCheckbox: TCheckBox;
     CustomerName: TEdit;
@@ -74,6 +75,7 @@ type
     Products: TStringGrid;
     VatLabel: TLabel;
     HTVLabel: TLabel;
+    procedure BillMeButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -272,6 +274,11 @@ begin
   readFormPos(Self, nil);
 end;
 
+procedure TBillingW.BillMeButtonClick(Sender: TObject);
+begin
+  ConfirmBill;
+end;
+
 procedure TBillingW.FormDestroy(Sender: TObject);
 var
   dic: IDictionary;
@@ -461,6 +468,7 @@ begin
   bill := TBills.Create(dao);
   bo:=TBillOutput.Create;
   bo.OutputDirectory:=dic.GetOutputDirectory;
+  bo.Dic:=dic;
   bill.Print(SerBill, bo);
   if DisplayBillCheckBox.Checked then
     ShellExecute(0,'open',PChar(bo.OutputDirectory),nil,nil,1);

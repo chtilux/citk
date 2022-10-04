@@ -11,7 +11,6 @@ object MainW: TMainW
   Constraints.MinWidth = 780
   Menu = citkMainMenu
   OnDestroy = FormDestroy
-  OnResize = FormResize
   OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.2.2.0'
@@ -39587,29 +39586,29 @@ object MainW: TMainW
       Action = ProductsAction
     end
     object ToolButton4: TToolButton
-      Left = 86
+      Left = 109
       Top = 2
       Action = CustomersAction
     end
     object ToolButton5: TToolButton
-      Left = 178
+      Left = 201
       Height = 22
       Top = 2
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object ToolButton6: TToolButton
-      Left = 109
+      Left = 132
       Top = 2
       Action = VATAction
     end
     object ToolButton7: TToolButton
-      Left = 132
+      Left = 155
       Top = 2
       Action = UsersAction
     end
     object ToolButton8: TToolButton
-      Left = 155
+      Left = 178
       Top = 2
       Action = ApplicationDictionaryAction
       AutoSize = True
@@ -39620,16 +39619,21 @@ object MainW: TMainW
       Action = DailyRecapAction
     end
     object ToolButton10: TToolButton
-      Left = 78
+      Left = 101
       Height = 22
       Top = 2
       Caption = 'ToolButton10'
       Style = tbsSeparator
     end
     object ToolButton11: TToolButton
-      Left = 186
+      Left = 209
       Top = 2
       Action = QuitApplicationAction
+    end
+    object ToolButton12: TToolButton
+      Left = 78
+      Top = 2
+      Action = ReportsAction
     end
   end
   object citkMainMenu: TMainMenu
@@ -39661,6 +39665,9 @@ object MainW: TMainW
       end
       object MenuItem3: TMenuItem
         Action = DailyRecapAction
+      end
+      object MenuItem4: TMenuItem
+        Action = ReportsAction
       end
       object Separator2: TMenuItem
         Caption = '-'
@@ -39733,6 +39740,13 @@ object MainW: TMainW
       ImageIndex = 7
       OnExecute = DailyRecapActionExecute
       ShortCut = 16452
+    end
+    object ReportsAction: TAction
+      Category = 'Application'
+      Caption = 'Reports...'
+      ImageIndex = 8
+      OnExecute = ReportsActionExecute
+      ShortCut = 16466
     end
   end
 end

@@ -109,26 +109,6 @@ uses
 procedure TSetDataGridColumnsHelper.SetOnSetDataGridColumns(
   ADBGrid: TDBGrid);
 begin
-  with ADBGrid.Columns.Add do
-  begin
-    FieldName:='login';
-    Width := 150;
-  end;
-  with ADBGrid.Columns.Add do
-  begin
-    FieldName:='user_name';
-    Width := 200;
-  end;
-  with ADBGrid.Columns.Add do
-  begin
-    FieldName:='active';
-    Width := 150;
-  end;
-  with ADBGrid.Columns.Add do
-  begin
-    FieldName:='password';
-    Width := 150;
-  end;
 end;
 
 { TDataGridForm }

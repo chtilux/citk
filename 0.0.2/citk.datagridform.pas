@@ -135,12 +135,12 @@ end;
 
 procedure TDataGridForm.FormCreate(Sender: TObject);
 begin
-  readFormPos(Self, nil);
+
 end;
 
 procedure TDataGridForm.FormDestroy(Sender: TObject);
 begin
-  writeFormPos(Self, nil);
+
 end;
 
 procedure TDataGridForm.FormShow(Sender: TObject);

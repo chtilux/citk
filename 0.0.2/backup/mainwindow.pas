@@ -55,11 +55,16 @@ type
   { TMainW }
 
   TMainW = class(TForm)
+    MenuItem4: TMenuItem;
+    ReportsAction: TAction;
     DailyRecapAction: TAction;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
+    ToolButton10: TToolButton;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
@@ -93,10 +98,10 @@ type
     procedure DailyRecapActionExecute(Sender: TObject);
     procedure EventsActionExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ProductsActionExecute(Sender: TObject);
     procedure QuitApplicationActionExecute(Sender: TObject);
+    procedure ReportsActionExecute(Sender: TObject);
     procedure UsersActionExecute(Sender: TObject);
     procedure VATActionExecute(Sender: TObject);
   private
@@ -108,6 +113,7 @@ type
     procedure DisplayVAT;
     procedure DisplayDailyRecap;
     procedure DisplayUsers;
+    procedure DisplayReports;
     procedure SetInfo(AValue: TInfo);
   public
     property Info: TInfo read FInfo write SetInfo;
@@ -123,7 +129,7 @@ implementation
 uses
   citk.utils, citk.dictionary, citk.ProductWindow, citk.customersWindow,
   citk.EventsWindow, citk.vat, citk.DailyRecapWindow, Chtilux.Utils,
-  citk.Users;
+  citk.Users, citk.Reports;
 
 { TMainW }
 
@@ -142,6 +148,11 @@ begin
   Close;
 end;
 
+procedure TMainW.ReportsActionExecute(Sender: TObject);
+begin
+  DisplayReports;
+end;
+
 procedure TMainW.UsersActionExecute(Sender: TObject);
 begin
   DisplayUsers;
@@ -156,10 +167,6 @@ procedure TMainW.FormDestroy(Sender: TObject);
 begin
   WriteCurrentSizeAndPosition(Sender as TForm);
   Info.Log('Application terminated');
-end;
-
-procedure TMainW.FormResize(Sender: TObject);
-begin
 end;
 
 procedure TMainW.SetInfo(AValue: TInfo);
@@ -233,6 +240,12 @@ procedure TMainW.DisplayUsers;
 begin
   glGlobalInfo.Log('DisplayUsers');
   citk.Users.DisplayUsers;
+end;
+
+procedure TMainW.DisplayReports;
+begin
+  glGlobalInfo.Log('DisplayReports');
+  citk.Reports.DisplayReports;
 end;
 
 end.

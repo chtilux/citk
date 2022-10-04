@@ -48,7 +48,7 @@ unit citk.PDFOutput;
 interface
 
 uses
-  Classes, SysUtils, citk.Output, SQLDB, FPPDF;
+  Classes, SysUtils, citk.Output, SQLDB, FPPDF, citk.dictionary;
 
 type
   { TPdfOutput }
@@ -56,12 +56,16 @@ type
   TPdfOutput = class(TInterfacedObject, IOutput)
   protected
     FOutputDirectory: TFilename;
+    FDic: IDictionary;
   public
     procedure Print(master, detail, vat: TSQLQuery); virtual;
     function CreatePDFDocument: TPDFDocument; virtual;
     function GetOutputDirectory: TFilename;
     procedure SetOutputDirectory(const AValue: TFilename);
     property OutputDirectory: TFilename read GetOutputDirectory write SetOutputDirectory;
+    function GetDictionary: IDictionary;
+    procedure SetDictionary(const Value: IDictionary);
+    property Dic: IDictionary read GetDictionary write setDictionary;
   end;
 
   { TBillOutput }
@@ -113,6 +117,16 @@ procedure TPdfOutput.SetOutputDirectory(const AValue: TFilename);
 begin
   if FOutputDirectory<>AValue then
     FOutputDirectory:=AValue;
+end;
+
+function TPdfOutput.GetDictionary: IDictionary;
+begin
+  Result := FDic;
+end;
+
+procedure TPdfOutput.SetDictionary(const Value: IDictionary);
+begin
+  FDic := Value;
 end;
 
 { TBillOutput }
@@ -192,7 +206,7 @@ begin
     page.SetFont(fontBold,8);
     page.WriteText(10, top, 'CELINE IN THE KITCHEN, DIFFERDANGE');
     Inc(top,5);
-    page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX    TVA : LU34239512       RESTAURATEUR Autorisation XXXXXXXXX');
+    page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX    TVA : LU34239512       RESTAURATEUR Autorisation 10144080/0');
 
     //GenerateText(page, 'Celine in the Kitchen');
     //page.WriteText(10,top,'Celine in the Kitchen');

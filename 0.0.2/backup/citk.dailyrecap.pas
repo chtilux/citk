@@ -334,7 +334,8 @@ begin
     page.SetFont(fontBold,8);
     page.WriteText(10, top, 'CELINE IN THE KITCHEN, DIFFERDANGE');
     Inc(top,5);
-    page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX      TVA : LU34239512     RESTAURATEUR Autorisation XXXXXXXXX');
+    //page.WriteText(10, top, 'R.C.S. Luxembourg XXXXXXX      TVA : LU34239512     RESTAURATEUR Autorisation 10144080/0');
+    page.WriteText(10, top, Format('R.C.S. Luxembourg %s      TVA : %s     RESTAURATEUR Autorisation %s',[Dic.GetRCS, Dic.GetVatNumber, Dic.GetPersonalNumber]));
 
     //GenerateText(page, 'Celine in the Kitchen');
     //page.WriteText(10,top,'Celine in the Kitchen');
@@ -371,7 +372,7 @@ var
   det: TDetail;
   tva: TVat;
 const
-  MARGIN=10; RATE=85; TTC=140; // AMOUNT=160; TVA=180;
+  MARGIN=10; HTV=45; RATE=85;  TTC=120;
 begin
   pdf := CreatePDFDocument;
   try
@@ -415,12 +416,16 @@ begin
     page.SetFont(font,10);
     Inc(top,10);
     Page.WriteText(MARGIN,top,'VAT RATE');
+    Page.WriteText(HTV, top, 'HTV');
+    Page.WriteText(RATE, top, 'VAT amount');
     Page.WriteText(TTC, top, 'TTC');
     for i := 0 to vat.count-1 do
     begin
       Inc(top, 8);
       tva := TVat(vat.Objects[i]);
       Page.WriteText(MARGIN,top,FormatFloat('0.00%', tva.VatRate));
+      Page.WriteText(HTV, top, FormatFloat('0.00€', tva.TTC/(1+tva.VatRate/100)));
+      Page.WriteText(RATE, top, FormatFloat('0.00€', tva.TTC-(tva.TTC/(1+tva.VatRate/100))));
       Page.WriteText(TTC, top, FormatFloat('0.00€', tva.TTC));
     end;
 

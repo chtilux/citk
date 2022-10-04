@@ -65,7 +65,8 @@ uses
   citk.Events, citk.EventDetail, citk.eventdetailWindow,
   citk.BillingWindow, IBConnection, citk.products, citk.vat, citk.VATWindow,
   citk.bill, citk.Output, citk.PDFOutput, citk.DataObject,
-  citk.DailyrecapWindow, citk.DailyRecap, citk.Users;
+  citk.DailyrecapWindow, citk.DailyRecap, citk.Users, citk.Reports, 
+citk.ReportsWindow;
 
 {$R *.res}
 

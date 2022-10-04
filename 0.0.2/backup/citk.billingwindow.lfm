@@ -219,6 +219,15 @@ object BillingW: TBillingW
           Caption = 'Display bill'
           TabOrder = 2
         end
+        object BillMeButton: TButton
+          Left = 8
+          Height = 25
+          Top = 8
+          Width = 75
+          Caption = 'Bill me'
+          OnClick = BillMeButtonClick
+          TabOrder = 3
+        end
       end
     end
   end

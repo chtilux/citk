@@ -127,6 +127,7 @@ begin
   dlr := TDailyRecap.Create(dao);
   otp := TDailyRecapOutput.Create;
   dic := TDictionary.Create(dao);
+  otp.Dic:=dic;
   otp.OutputDirectory:=dic.GetOutputDirectory;
   dlr.Print(datbill, otp);
   Info.Log(Format('Daily recap due date %s generated to %s',[DateToStr(datbill),otp.OutputDirectory]));
