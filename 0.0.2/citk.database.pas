@@ -431,7 +431,55 @@ var
         end;
       end;
     end;
-  end;   //procedure DBScript_0_03;
+  end;
+  procedure DBScript_0_06;
+  begin
+    if Release = '0.05' then
+    begin
+      try
+        FBCreateTableColumn('bill_event','serbill','d_serial_nn','');
+        FBCreateTableColumn('bill_event','serevt','d_serial_nn','');
+        FBAddConstraint('bill_event','pk_bill_event','primary key','(serbill,serevt)');
+        Info.Transaction.Commit;
+
+        IncRelease(Release);
+        Log('Release='+Release);
+        UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+        Info.Transaction.Commit;
+        Log(Format('Release %s commited.',[Release]));
+      except
+        on E:Exception do
+        begin
+          Info.Transaction.Rollback;
+          Log(E.Message);
+        end;
+      end;
+    end;
+  end;
+  procedure DBScript_0_07;
+  begin
+    if Release = '0.06' then
+    begin
+      try
+        FBCreateTableColumn('bill_detail','amount','decimal(9,2)','');
+        Info.Transaction.Commit;
+        SQLDirect('UPDATE bill_detail SET amount = quantity * price WHERE amount IS NULL');
+        Info.Transaction.Commit;
+        IncRelease(Release);
+        Log('Release='+Release);
+        UpdateDatabaseRelease(Info.DatabaseRelease, Release);
+        Info.Transaction.Commit;
+        Log(Format('Release %s commited.',[Release]));
+      except
+        on E:Exception do
+        begin
+          Info.Transaction.Rollback;
+          Log(E.Message);
+        end;
+      end;
+    end;
+  end;
+  //procedure DBScript_0_03;
   //begin
   //  if Release = '0.02' then
   //  begin
@@ -497,6 +545,8 @@ begin
   DBScript_0_02;
   DBScript_0_04;
   DBScript_0_05;
+  DBScript_0_06;
+  DBScript_0_07;
   //if Info.DatabaseRelease = 'x.xx' then
   //begin
   //  IncRelease(Release);

@@ -180,7 +180,7 @@ begin
     end;
     if EventGroupByBox.Checked then
     begin
-      select := select + ',e.libevt';
+      select := select + ',ev.libevt';
       Inc(GroupCount);
     end;
     if PeriodGroupByBox.Checked then
@@ -192,10 +192,12 @@ begin
     if not select.IsEmpty then
     begin
       Delete(select,1,1);
-      select := 'SELECT ' + select + ', SUM(quantity) qty, SUM(price) chida';
+      select := 'SELECT ' + select + ', SUM(quantity) qty, SUM(amount) chida';
       where := ' FROM bill_detail bd'
               +'      LEFT JOIN bill b ON bd.serbill = b.serbill'
-              +'      LEFT JOIN customers c ON b.customerid = c.sercust';
+              +'      LEFT JOIN customers c ON b.customerid = c.sercust'
+              +'      LEFT JOIN bill_event bv ON b.serbill = bv.serbill'
+              +'      LEFT JOIN event ev ON bv.serevt = ev.serevt';
       for i:=1 to GroupCount do
         group := Format('%s,%d',[group, i]);
       Delete(group,1,1);
@@ -203,10 +205,12 @@ begin
     end
     else
     begin
-      select := 'SELECT bd.libprd, SUM(quantity) qty, SUM(price) chida';
+      select := 'SELECT bd.libprd, SUM(quantity) qty, SUM(amount) chida';
       where := ' FROM bill_detail bd'
               +'      LEFT JOIN bill b ON bd.serbill = b.serbill'
-              +'      LEFT JOIN customers c ON b.customerid = c.sercust';
+              +'      LEFT JOIN customers c ON b.customerid = c.sercust'
+              +'      LEFT JOIN bill_event bv ON b.serbill = bv.serbill'
+              +'      LEFT JOIN event ev ON bv.serevt = ev.serevt';
       group := ' GROUP BY 1'
               +' ORDER BY 3 DESC, 2';
     end;
@@ -215,6 +219,7 @@ begin
     FQuery.SQL.Add(group);
   finally
     try
+      DBGrid1.Columns.Clear;
       FQuery.Open;
       ShowMessage(FQuery.SQL.Text);
     except

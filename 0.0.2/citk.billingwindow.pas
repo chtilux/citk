@@ -476,7 +476,7 @@ function TBillingW.CreateBill(const PaymentMethod: string; var serbill: integer)
 var
   dao: IDataObject;
   bill: IBills;
-  master, detail, vat: TSQLQuery;
+  master, detail, vat, evt: TSQLQuery;
   row: integer;
   rowqty, rowprice, rowtotal, htv: double;
   ttc: double;
@@ -493,7 +493,7 @@ begin
   bill := TBills.Create(dao);
   Result := bill.GetBillNumber;
   serbill := bill.GetPK;
-  detail := nil; vat := nil; VatValues := nil;
+  detail := nil; vat := nil; VatValues := nil; evt:=nil;
   master := dao.GetQuery;
   try
     master.SQL.Add(bill.GetInsertBillSQL);
@@ -504,6 +504,7 @@ begin
     vat := dao.GetQuery;
     vat.SQL.Add(bill.GetInsertBillVatSQL);
     vat.ParamByName('serbill').AsInteger:=serbill;
+
     VatValues := TStringList.Create;
 
     px := TProducts.Create(dao);
@@ -564,6 +565,13 @@ begin
         vat.ExecSQL;
         tva.Free;
       end;
+
+      evt:= dao.GetQuery;
+      evt.SQL.Add('INSERT INTO bill_event (serbill, serevt) VALUES (:serbill,:serevt)');
+      evt.ParamByName('serbill').AsInteger:=serbill;
+      evt.ParamByName('serevt').AsInteger:=Event;
+      evt.ExecSQL;
+
       dao.Transaction.CommitRetaining;
 
       Info.Log(Format('BILL %d created for customer %d', [Result, master.ParamByName('customerid').AsInteger]));

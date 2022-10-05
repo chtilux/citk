@@ -271,7 +271,6 @@ begin
   PrintBillCheckbox.Checked:=dic.GetPrintBillOption;
   DisplayBillCheckBox.Checked:=dic.GetDisplayBillOption;
   LoadBillOfTheDay;
-  readFormPos(Self, nil);
 end;
 
 procedure TBillingW.BillMeButtonClick(Sender: TObject);
@@ -286,7 +285,6 @@ begin
   dic := TDictionary.Create(TFirebirdDataObject.Create(Info.Cnx, Info.Transaction));
   dic.SetDisplayBillOption(DisplayBillCheckBox.Checked);
   dic.SetPrintBillOption(PrintBillCheckbox.Checked);
-  writeFormPos(Self, nil);
 end;
 
 procedure TBillingW.CleanForm;
