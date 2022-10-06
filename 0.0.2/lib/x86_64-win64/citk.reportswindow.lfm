@@ -1,25 +1,25 @@
 object ReportsW: TReportsW
   Left = 526
-  Height = 530
+  Height = 555
   Top = 197
-  Width = 770
+  Width = 782
   Caption = 'Reports'
-  ClientHeight = 530
-  ClientWidth = 770
+  ClientHeight = 555
+  ClientWidth = 782
   Constraints.MinHeight = 530
   Constraints.MinWidth = 690
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '2.2.2.0'
+  LCLVersion = '2.2.4.0'
   object SelectionBox: TGroupBox
     Left = 16
     Height = 248
     Top = 8
-    Width = 742
+    Width = 754
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Selection Criteria'
     ClientHeight = 228
-    ClientWidth = 738
+    ClientWidth = 750
     TabOrder = 0
     object CustomersList: TCheckListBox
       Left = 12
@@ -102,7 +102,7 @@ object ReportsW: TReportsW
     Left = 17
     Height = 57
     Top = 264
-    Width = 741
+    Width = 753
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     Caption = 'Group by'
@@ -115,41 +115,41 @@ object ReportsW: TReportsW
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 4
     ClientHeight = 37
-    ClientWidth = 737
+    ClientWidth = 749
     Columns = 4
     TabOrder = 1
     object CustomerGroupByBox: TCheckBox
       Left = 6
       Height = 25
       Top = 6
-      Width = 194
+      Width = 197
       Caption = 'Customer'
       OnClick = CustomersListClick
       TabOrder = 0
     end
     object ProductGroupByBox: TCheckBox
-      Left = 200
+      Left = 203
       Height = 25
       Top = 6
-      Width = 184
+      Width = 187
       Caption = 'Product'
       OnClick = CustomersListClick
       TabOrder = 1
     end
     object EventGroupByBox: TCheckBox
-      Left = 384
+      Left = 390
       Height = 25
       Top = 6
-      Width = 171
+      Width = 174
       Caption = 'Event'
       OnClick = CustomersListClick
       TabOrder = 2
     end
     object PeriodGroupByBox: TCheckBox
-      Left = 555
+      Left = 564
       Height = 25
       Top = 6
-      Width = 176
+      Width = 179
       Caption = 'Period'
       OnClick = CustomersListClick
       TabOrder = 3
@@ -157,14 +157,24 @@ object ReportsW: TReportsW
   end
   object DBGrid1: TDBGrid
     Left = 16
-    Height = 190
+    Height = 183
     Top = 328
-    Width = 742
+    Width = 754
     Anchors = [akTop, akLeft, akRight, akBottom]
     Color = clWindow
     Columns = <>
     DataSource = DataSource
     TabOrder = 2
+  end
+  object ExportToExcelButton: TBitBtn
+    Left = 16
+    Height = 30
+    Top = 519
+    Width = 754
+    Anchors = [akLeft, akRight]
+    Caption = 'Export to Excel'
+    OnClick = ExportToExcelButtonClick
+    TabOrder = 3
   end
   object DataSource: TDataSource
     Left = 217

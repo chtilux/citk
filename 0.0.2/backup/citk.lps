@@ -26,18 +26,17 @@
       <Unit>
         <Filename Value="citk.database.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="444"/>
         <CursorPos Y="464"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="citk.global.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="191"/>
-        <CursorPos X="67" Y="226"/>
+        <TopLine Value="118"/>
+        <CursorPos X="11" Y="140"/>
         <UsageCount Value="200"/>
       </Unit>
       <Unit>
@@ -264,7 +263,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="26"/>
         <CursorPos Y="63"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="213"/>
       </Unit>
       <Unit>
         <Filename Value="citk.pdfoutput.pas"/>
@@ -273,7 +272,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="181"/>
         <CursorPos X="28" Y="210"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="204"/>
       </Unit>
       <Unit>
         <Filename Value="citk.dailyrecapwindow.pas"/>
@@ -285,7 +284,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="47"/>
         <CursorPos X="3" Y="132"/>
-        <UsageCount Value="166"/>
+        <UsageCount Value="185"/>
       </Unit>
       <Unit>
         <Filename Value="citk.dailyrecap.pas"/>
@@ -294,7 +293,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="413"/>
         <CursorPos Y="437"/>
-        <UsageCount Value="166"/>
+        <UsageCount Value="185"/>
       </Unit>
       <Unit>
         <Filename Value="citk.users.pas"/>
@@ -302,7 +301,7 @@
         <UnitName Value="citk.Users"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="18" Y="89"/>
-        <UsageCount Value="82"/>
+        <UsageCount Value="101"/>
       </Unit>
       <Unit>
         <Filename Value="citk.reports.pas"/>
@@ -311,7 +310,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="31"/>
         <CursorPos X="34" Y="65"/>
-        <UsageCount Value="61"/>
+        <UsageCount Value="80"/>
       </Unit>
       <Unit>
         <Filename Value="citk.reportswindow.pas"/>
@@ -321,9 +320,12 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="citk.ReportsWindow"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="187"/>
-        <CursorPos X="65" Y="208"/>
-        <UsageCount Value="60"/>
+        <TopLine Value="315"/>
+        <CursorPos X="60" Y="357"/>
+        <UsageCount Value="79"/>
+        <Bookmarks Count="1">
+          <Item0 X="39" Y="172" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -332,7 +334,7 @@
         <UnitName Value="citk.Billing"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="2"/>
-        <UsageCount Value="147"/>
+        <UsageCount Value="146"/>
       </Unit>
       <Unit>
         <Filename Value="citk.billreportwindow.pas"/>
@@ -342,7 +344,7 @@
         <UnitName Value="citk.BillReportWindow"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="66" Y="8"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="citk.dataobject.pas"/>
@@ -350,48 +352,48 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="11"/>
         <CursorPos X="22" Y="24"/>
-        <UsageCount Value="78"/>
+        <UsageCount Value="77"/>
       </Unit>
       <Unit>
         <Filename Value="citk.firebirddataobject.pas"/>
         <UnitName Value="citk.FirebirdDataObject"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="9" Y="13"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="55"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\..\..\vcl\zeos\7.2.14\src\component\ZConnection.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="42"/>
         <CursorPos X="37" Y="71"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\interfaces.pp"/>
         <UnitName Value="Interfaces"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\lcl\include\customcheckbox.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="113"/>
         <CursorPos Y="134"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\..\vcl\lib\chtilux.utils.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="8"/>
         <CursorPos X="11" Y="30"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3528"/>
         <CursorPos X="30" Y="3594"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit>
       <Unit>
         <Filename Value="..\..\..\vcl\dcp\Ciphers\dcprc4.pas"/>
@@ -399,7 +401,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="170"/>
         <CursorPos Y="207"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit>
       <Unit>
@@ -407,42 +409,143 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="61"/>
         <CursorPos X="38" Y="79"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
+      <Unit>
+        <Filename Value="..\..\..\vcl\lib\u_pro_excel.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="33" Y="30"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="DriveOleExcel.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1459"/>
+        <CursorPos X="70" Y="1468"/>
+        <UsageCount Value="10"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="7">
+    <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="citk.reportswindow.pas"/>
-        <Caret Line="212" Column="48" TopLine="180"/>
+        <Caret Line="195" Column="53" TopLine="185"/>
       </Position>
       <Position>
         <Filename Value="citk.reportswindow.pas"/>
-        <Caret Line="198" Column="74" TopLine="178"/>
+        <Caret Line="199" Column="36" TopLine="178"/>
       </Position>
       <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="464" TopLine="444"/>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="195" TopLine="178"/>
       </Position>
       <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="465" TopLine="444"/>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="201" TopLine="178"/>
       </Position>
       <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="466" TopLine="444"/>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="195" TopLine="178"/>
       </Position>
       <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="467" TopLine="444"/>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="197" TopLine="178"/>
       </Position>
       <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="468" TopLine="444"/>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="198" TopLine="178"/>
       </Position>
       <Position>
-        <Filename Value="citk.database.pas"/>
-        <Caret Line="469" TopLine="444"/>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="199" TopLine="178"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="201" TopLine="178"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="194" Column="30" TopLine="178"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="201" Column="30" TopLine="201"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="161" Column="3" TopLine="159"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="34" Column="23" TopLine="31"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="159" TopLine="158"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="336" Column="21" TopLine="297"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="168" Column="8" TopLine="147"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="341" Column="32" TopLine="123"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="7" Column="5"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="51" Column="42" TopLine="15"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="51" Column="35" TopLine="41"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="341" TopLine="306"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="342" TopLine="307"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="343" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="344" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="345" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="346" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="345" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="346" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="345" TopLine="308"/>
+      </Position>
+      <Position>
+        <Filename Value="citk.reportswindow.pas"/>
+        <Caret Line="346" TopLine="308"/>
       </Position>
     </JumpHistory>
     <RunParams>
