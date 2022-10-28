@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  DBGrids, CheckLst, Buttons, citk.DataObject, SQLDB, DB;
+  DBGrids, CheckLst, Buttons, findControl, citk.DataObject, SQLDB, DB;
 
 type
 

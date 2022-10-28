@@ -135,7 +135,7 @@ uses
 
 procedure TMainW.FormShow(Sender: TObject);
 begin
-  ReadLastSizeAndPosition(Sender as TForm);
+
 end;
 
 procedure TMainW.ProductsActionExecute(Sender: TObject);
@@ -165,7 +165,6 @@ end;
 
 procedure TMainW.FormDestroy(Sender: TObject);
 begin
-  WriteCurrentSizeAndPosition(Sender as TForm);
   Info.Log('Application terminated');
 end;
 

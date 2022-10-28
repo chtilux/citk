@@ -1,10 +1,10 @@
 object ReportsW: TReportsW
   Left = 526
-  Height = 555
+  Height = 599
   Top = 197
   Width = 782
   Caption = 'Reports'
-  ClientHeight = 555
+  ClientHeight = 599
   ClientWidth = 782
   Constraints.MinHeight = 530
   Constraints.MinWidth = 690
@@ -157,7 +157,7 @@ object ReportsW: TReportsW
   end
   object DBGrid1: TDBGrid
     Left = 16
-    Height = 183
+    Height = 227
     Top = 328
     Width = 754
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -169,7 +169,7 @@ object ReportsW: TReportsW
   object ExportToExcelButton: TBitBtn
     Left = 16
     Height = 30
-    Top = 519
+    Top = 561
     Width = 754
     Anchors = [akLeft, akRight]
     Caption = 'Export to Excel'

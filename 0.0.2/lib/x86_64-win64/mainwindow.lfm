@@ -13,7 +13,7 @@ object MainW: TMainW
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.2.2.0'
+  LCLVersion = '2.2.4.0'
   object SB: TStatusBar
     Left = 0
     Height = 23
@@ -39,8 +39,8 @@ object MainW: TMainW
   end
   object Logo: TImage
     Left = 0
-    Height = 413
-    Top = 24
+    Height = 403
+    Top = 34
     Width = 780
     Align = alClient
     Center = True
@@ -39554,23 +39554,25 @@ object MainW: TMainW
   end
   object ToolBar1: TToolBar
     Left = 0
-    Height = 24
+    Height = 34
     Top = 0
     Width = 780
     AutoSize = True
+    ButtonHeight = 32
+    ButtonWidth = 32
     Caption = 'ToolBar1'
     ChildSizing.LeftRightSpacing = 5
     ChildSizing.TopBottomSpacing = 5
     ChildSizing.HorizontalSpacing = 5
     ChildSizing.VerticalSpacing = 5
     ChildSizing.ControlsPerLine = 1
-    Images = citkDataModule.citk16ImageList
+    Images = citkDataModule.citk32ImageList
     ParentShowHint = False
     ShowHint = True
     TabOrder = 1
     object ToolButton1: TToolButton
       Left = 1
-      Height = 22
+      Height = 32
       Top = 2
       Caption = 'ToolButton1'
       Style = tbsSeparator
@@ -39581,57 +39583,57 @@ object MainW: TMainW
       Action = EventsAction
     end
     object ToolButton3: TToolButton
-      Left = 55
+      Left = 81
       Top = 2
       Action = ProductsAction
     end
     object ToolButton4: TToolButton
-      Left = 109
+      Left = 161
       Top = 2
       Action = CustomersAction
     end
     object ToolButton5: TToolButton
-      Left = 201
-      Height = 22
+      Left = 305
+      Height = 32
       Top = 2
       Caption = 'ToolButton5'
       Style = tbsSeparator
     end
     object ToolButton6: TToolButton
-      Left = 132
+      Left = 197
       Top = 2
       Action = VATAction
     end
     object ToolButton7: TToolButton
-      Left = 155
+      Left = 233
       Top = 2
       Action = UsersAction
     end
     object ToolButton8: TToolButton
-      Left = 178
+      Left = 269
       Top = 2
       Action = ApplicationDictionaryAction
       AutoSize = True
     end
     object ToolButton9: TToolButton
-      Left = 32
+      Left = 45
       Top = 2
       Action = DailyRecapAction
     end
     object ToolButton10: TToolButton
-      Left = 101
-      Height = 22
+      Left = 153
+      Height = 32
       Top = 2
       Caption = 'ToolButton10'
       Style = tbsSeparator
     end
     object ToolButton11: TToolButton
-      Left = 209
+      Left = 313
       Top = 2
       Action = QuitApplicationAction
     end
     object ToolButton12: TToolButton
-      Left = 78
+      Left = 117
       Top = 2
       Action = ReportsAction
     end

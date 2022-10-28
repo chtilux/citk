@@ -56,6 +56,7 @@ type
 
   TcitkDataModule = class(TDataModule)
     citk16ImageList: TImageList;
+    citk32ImageList: TImageList;
   private
 
   public

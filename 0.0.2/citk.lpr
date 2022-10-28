@@ -58,15 +58,14 @@ uses
   Forms, mainwindow, SysUtils, Dialogs, lazcontrols,
   runtimetypeinfocontrols, datetimectrls,Controls,
   { you can add units after this }
-  citk.global, citk.Database, Chtilux.Logger, citk.firebird, citk.login,
-  citk.loginDialog, citk.utils, citk.user, citk.persistence, citk.encrypt,
-  citk.DataModule, citk.DataGridForm, sqldb, db, citk.dictionary,
+  citk.global, citk.Database, Chtilux.Logger, searchbarpackage, citk.firebird,
+  citk.login, citk.loginDialog, citk.utils, citk.user, citk.persistence,
+  citk.encrypt, citk.DataModule, citk.DataGridForm, sqldb, db, citk.dictionary,
   citk.ProductWindow, citk.customersWindow, citk.customers, citk.EventsWindow,
-  citk.Events, citk.EventDetail, citk.eventdetailWindow,
-  citk.BillingWindow, IBConnection, citk.products, citk.vat, citk.VATWindow,
-  citk.bill, citk.Output, citk.PDFOutput, citk.DataObject,
-  citk.DailyrecapWindow, citk.DailyRecap, citk.Users, citk.Reports, 
-citk.ReportsWindow;
+  citk.Events, citk.EventDetail, citk.eventdetailWindow, citk.BillingWindow,
+  IBConnection, citk.products, citk.vat, citk.VATWindow, citk.bill, citk.Output,
+  citk.PDFOutput, citk.DataObject, citk.DailyrecapWindow, citk.DailyRecap,
+  citk.Users, citk.Reports, citk.ReportsWindow;
 
 {$R *.res}
 

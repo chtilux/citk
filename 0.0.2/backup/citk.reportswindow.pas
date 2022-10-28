@@ -339,18 +339,22 @@ var
   row, col: integer;
 begin
   CreerInstanceDeExcel(XLApp, True);
-  CreerNouveauClasseur(wkb, xlapp);
-  sht := wkb.ActiveSheet;
-  row := 1;
-  for col := 1 to FQuery.FieldCount do
-    sht.Cells[row,col]:=FQuery.Fields[Pred(col)].FieldName;
-  FQuery.First;
-  while not FQuery.Eof do
-  begin
-    Inc(row);
+  try
+    CreerNouveauClasseur(wkb, xlapp);
+    sht := wkb.ActiveSheet;
+    row := 1;
     for col := 1 to FQuery.FieldCount do
-      sht.Cells[row,col]:=FQuery.Fields[Pred(col)].AsString;
-    FQuery.Next;
+      sht.Cells[row,col]:=FQuery.Fields[Pred(col)].FieldName;
+    FQuery.First;
+    while not FQuery.Eof do
+    begin
+      Inc(row);
+      for col := 1 to FQuery.FieldCount do
+        sht.Cells[row,col]:=FQuery.Fields[Pred(col)].AsString;
+      FQuery.Next;
+    end;
+  finally
+    XLApp:=Unassigned;
   end;
 end;
 
